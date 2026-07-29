@@ -1,0 +1,156 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SALES
+  MANAGER
+  ADMIN
+}
+
+enum QuoteStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  SENT
+  ACCEPTED
+}
+
+// ==========================================
+// AUTH.JS (v5) REQUIRED TABLES
+// ==========================================
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?   // Hashed via bcrypt
+  role          Role      @default(SALES)
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  quotes        Quote[]   @relation("CreatedQuotes")
+  approvals     Quote[]   @relation("ApprovedQuotes")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// ==========================================
+// DOMAIN MODELS: QUOTATION MANAGEMENT
+// ==========================================
+model Customer {
+  id          String   @id @default(cuid())
+  companyName String   @unique
+  contactName String
+  email       String
+  phone       String?
+  address     String?
+  quotes      Quote[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Quote {
+  id              String      @id @default(cuid())
+  quoteNumber     String      @unique // e.g., "QF-2026-0001"
+  version         Int         @default(1)
+  status          QuoteStatus @default(DRAFT)
+  
+  // Financial Totals (NUMERIC precision to avoid floating-point drift)
+  subtotal        Decimal     @default(0.0000) @db.Decimal(20, 4)
+  discountPercent Decimal     @default(0.0000) @db.Decimal(5, 2)
+  taxRate         Decimal     @default(0.0000) @db.Decimal(5, 2)
+  totalAmount     Decimal     @default(0.0000) @db.Decimal(20, 4)
+  
+  // Self-Referencing Versioning Constraint
+  parentQuoteId   String?
+  parentQuote     Quote?      @relation("QuoteRevisions", fields: [parentQuoteId], references: [id])
+  revisions       Quote[]     @relation("QuoteRevisions")
+
+  // Relationships
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  createdById     String
+  createdBy       User        @relation("CreatedQuotes", fields: [createdById], references: [id])
+  approvedById    String?
+  approvedBy      User?       @relation("ApprovedQuotes", fields: [approvedById], references: [id])
+  
+  lineItems       LineItem[]
+  notes           String?
+  validUntil      DateTime
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([customerId])
+  @@index([createdById])
+  @@index([status])
+}
+
+model LineItem {
+  id            String   @id @default(cuid())
+  quoteId       String
+  quote         Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  
+  partNumber    String   // Electronics SKU/MPN
+  description   String
+  quantity      Int
+  
+  // Frozen Pricing Snapshots
+  unitCost      Decimal  @db.Decimal(20, 4)
+  unitPrice     Decimal  @db.Decimal(20, 4)
+  marginPercent Decimal  @db.Decimal(5, 2)
+  totalPrice    Decimal  @db.Decimal(20, 4)
+  
+  leadTimeDays  Int?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([quoteId])
+  @@index([partNumber])
+}
