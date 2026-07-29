@@ -1,23 +1,76 @@
 import { db } from "./lib/db";
 import { searchMouserPart } from "./lib/mouser";
+import { Role } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
-// Testing with our cached offline part to ensure deterministic seeding
-const INITIAL_PART_QUERIES = [
-  "SN74HC00N", // IC - Quad 2-Input NAND Gate (TI) - Available in .cache/mouser/
+// Part queries to seed from Mouser API (uses offline cache when available)
+const PART_QUERIES = [
+  "SN74HC00N", // IC - Quad 2-Input NAND Gate (TI)
+  "NE555P",    // Timer IC
+  "LM317T",    // Voltage Regulator
+  "ATMEGA328P-PU", // Microcontroller
 ];
 
-async function main() {
-  console.log("🌱 Starting automated bulk catalog seed...");
+async function seedUsers() {
+  console.log("👤 Seeding users...");
+
+  const defaultPassword = await bcrypt.hash("Password123!", 12);
+
+  const users = [
+    {
+      email: "admin@quoteflow.io",
+      name: "Admin User",
+      password: defaultPassword,
+      role: Role.ADMIN,
+    },
+    {
+      email: "manager@quoteflow.io",
+      name: "Manager User",
+      password: defaultPassword,
+      role: Role.MANAGER,
+    },
+    {
+      email: "sales@quoteflow.io",
+      name: "Sales User",
+      password: defaultPassword,
+      role: Role.SALES,
+    },
+  ];
+
+  for (const u of users) {
+    // Idempotent upsert by unique email address
+    const createdUser = await db.user.upsert({
+      where: { email: u.email },
+      update: {
+        name: u.name,
+        role: u.role,
+        password: u.password,
+      },
+      create: {
+        email: u.email,
+        name: u.name,
+        role: u.role,
+        password: u.password,
+      },
+    });
+    console.log(`  ✅ Upserted user: ${createdUser.email} (${createdUser.role})`);
+  }
+
+  console.log("👤 User seeding complete!");
+}
+
+async function seedParts() {
+  console.log("🔧 Seeding parts from Mouser API...");
 
   let seededCount = 0;
 
-  for (const query of INITIAL_PART_QUERIES) {
+  for (const query of PART_QUERIES) {
     try {
-      console.log(`\n🔍 Searching (or reading disk cache) for: ${query}...`);
+      console.log(`\n  🔍 Searching (or reading disk cache) for: ${query}...`);
       const results = await searchMouserPart(query);
 
       if (!results || results.length === 0) {
-        console.warn(`  ⚠️ No results found for "${query}". Skipping.`);
+        console.warn(`    ⚠️ No results found for "${query}". Skipping.`);
         continue;
       }
 
@@ -33,7 +86,7 @@ async function main() {
       const manufacturer = item.Manufacturer || "Unknown";
       const manufacturerPartNum = item.ManufacturerPartNumber || query;
 
-      // Idempotent upsert by our new composite natural key!
+      // Idempotent upsert by composite natural key
       await db.part.upsert({
         where: {
           manufacturer_manufacturerPartNum: {
@@ -59,14 +112,24 @@ async function main() {
         },
       });
 
-      console.log(`  ✅ Successfully upserted: [${manufacturer}] ${manufacturerPartNum} ($${price.toFixed(2)})`);
+      console.log(`    ✅ Successfully upserted: [${manufacturer}] ${manufacturerPartNum} ($${price.toFixed(2)})`);
       seededCount++;
     } catch (err: any) {
-      console.error(`  ❌ Failed to seed "${query}":`, err.message || err);
+      console.error(`    ❌ Failed to seed "${query}":`, err.message || err);
     }
   }
 
-  console.log(`\n🎉 Bulk seeding complete! Successfully seeded ${seededCount} parts.`);
+  console.log(`\n🔧 Part seeding complete! Successfully seeded ${seededCount} parts.`);
+}
+
+async function main() {
+  console.log("🌱 Starting database seed...\n");
+
+  await seedUsers();
+  console.log();
+  await seedParts();
+
+  console.log("\n🎉 Database seeding complete!");
 }
 
 main()
