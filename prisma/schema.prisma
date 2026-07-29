@@ -6,6 +6,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ADMIN: Reserved for system-level user provisioning and audit governance.
+// MANAGER / SALES: Operational roles for quotation workflow and approvals.
+
 enum Role {
   SALES
   MANAGER
@@ -153,4 +156,21 @@ model LineItem {
 
   @@index([quoteId])
   @@index([partNumber])
+}
+
+model Part {
+  id                  String   @id @default(cuid())
+  mouserPartNumber    String?  // No longer unique! Still useful for vendor tracking.
+  manufacturer        String
+  manufacturerPartNum String
+  description         String   @default("No description provided.")
+  category            String   @default("Integrated Circuits (ICs)")
+  unitPrice           Float    @default(0.0)
+  stockQuantity       Int      @default(0)
+  dataSheetUrl        String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // The true natural key: prevents duplicate physical components regardless of vendor
+  @@unique([manufacturer, manufacturerPartNum])
 }
