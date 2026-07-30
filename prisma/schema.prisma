@@ -6,22 +6,28 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// ADMIN: Reserved for system-level user provisioning and audit governance.
+// ADMIN: Reserved for system-level user provisioning, catalog seeding, and audit governance.
 // MANAGER / SALES: Operational roles for quotation workflow and approvals.
-
 enum Role {
   SALES
   MANAGER
   ADMIN
 }
 
+// Unified 11-state lifecycle governing both internal approvals and external sales pipeline.
 enum QuoteStatus {
   DRAFT
   PENDING_APPROVAL
   APPROVED
   REJECTED
   SENT
+  UNDER_NEGOTIATION
   ACCEPTED
+  ORDER_PLACED
+  CLOSED_WON
+  CLOSED_LOST
+  EXPIRED
+  ARCHIVED
 }
 
 // ==========================================
@@ -37,8 +43,9 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  quotes        Quote[]   @relation("CreatedQuotes")
-  approvals     Quote[]   @relation("ApprovedQuotes")
+  quotes        Quote[]       @relation("CreatedQuotes")
+  approvals     Quote[]       @relation("ApprovedQuotes")
+  activityLogs  ActivityLog[] @relation("UserActivityLogs")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -86,29 +93,51 @@ model VerificationToken {
 // DOMAIN MODELS: QUOTATION MANAGEMENT
 // ==========================================
 model Customer {
-  id          String   @id @default(cuid())
-  companyName String   @unique
-  contactName String
-  email       String
-  phone       String?
-  address     String?
-  quotes      Quote[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String            @id @default(cuid())
+  companyName       String            @unique
+  gstin             String?
+  billingAddress    Json?
+  shippingAddress   Json?
+  paymentTerms      String            @default("NET30")
+  preferredCurrency String            @default("INR") // Essential for multi-currency B2B edge-cases
+
+  // Relationships
+  contacts          CustomerContact[]
+  quotes            Quote[]
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model CustomerContact {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  name       String
+  email      String
+  phone      String?
+  isPrimary  Boolean  @default(false)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([isPrimary])
 }
 
 model Quote {
   id              String      @id @default(cuid())
-  quoteNumber     String      @unique // e.g., "QF-2026-0001"
+  quoteNumber     String
   version         Int         @default(1)
   status          QuoteStatus @default(DRAFT)
-  
+
   // Financial Totals (NUMERIC precision to avoid floating-point drift)
   subtotal        Decimal     @default(0.0000) @db.Decimal(20, 4)
   discountPercent Decimal     @default(0.0000) @db.Decimal(5, 2)
   taxRate         Decimal     @default(0.0000) @db.Decimal(5, 2)
   totalAmount     Decimal     @default(0.0000) @db.Decimal(20, 4)
-  
+
   // Self-Referencing Versioning Constraint
   parentQuoteId   String?
   parentQuote     Quote?      @relation("QuoteRevisions", fields: [parentQuoteId], references: [id])
@@ -121,51 +150,69 @@ model Quote {
   createdBy       User        @relation("CreatedQuotes", fields: [createdById], references: [id])
   approvedById    String?
   approvedBy      User?       @relation("ApprovedQuotes", fields: [approvedById], references: [id])
-  
+
   lineItems       LineItem[]
+  activityLogs    ActivityLog[]
   notes           String?
   validUntil      DateTime
-  
+
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
   @@index([customerId])
   @@index([createdById])
   @@index([status])
+  @@unique([quoteNumber, version])
 }
 
 model LineItem {
-  id            String   @id @default(cuid())
-  quoteId       String
-  quote         Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  
-  partNumber    String   // Electronics SKU/MPN
-  description   String
-  quantity      Int
-  
-  // Frozen Pricing Snapshots
-  unitCost      Decimal  @db.Decimal(20, 4)
-  unitPrice     Decimal  @db.Decimal(20, 4)
-  marginPercent Decimal  @db.Decimal(5, 2)
-  totalPrice    Decimal  @db.Decimal(20, 4)
-  
-  leadTimeDays  Int?
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String   @id @default(cuid())
+  quoteId         String
+  quote           Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  partNumber      String   // Electronics SKU/MPN
+  description     String
+  quantity        Int
+
+  // List-Price + Discounting Pricing Model (replaces Cost-Plus Margin)
+  listPrice       Decimal  @db.Decimal(20, 4) // Original catalog unit price
+  unitPrice       Decimal  @db.Decimal(20, 4) // Final selling unit price (can be overridden)
+  overrideReason  String?                     // MANDATORY if listPrice override > threshold
+  discountPercent Decimal  @default(0.00) @db.Decimal(5, 2)
+  discountAmount  Decimal  @default(0.0000) @db.Decimal(20, 4)
+  totalPrice      Decimal  @db.Decimal(20, 4) // Final line subtotal after line-level discounts
+
+  leadTimeDays    Int?     @default(14)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([quoteId])
   @@index([partNumber])
 }
 
+model ActivityLog {
+  id        String   @id @default(cuid())
+  quoteId   String
+  quote     Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation("UserActivityLogs", fields: [userId], references: [id])
+  action    String   // e.g., "STATUS_CHANGE", "REVISION_CREATED", "PRICE_OVERRIDE", "QUOTE_CREATED"
+  notes     String?
+  timestamp DateTime @default(now())
+
+  @@index([quoteId])
+  @@index([userId])
+}
+
 model Part {
   id                  String   @id @default(cuid())
-  mouserPartNumber    String?  // No longer unique! Still useful for vendor tracking.
+  mouserPartNumber    String?  // Vendor tracking reference
   manufacturer        String
   manufacturerPartNum String
   description         String   @default("No description provided.")
   category            String   @default("Integrated Circuits (ICs)")
-  unitPrice           Float    @default(0.0)
+  unitPrice           Float    @default(0.0) // Catalog reference price (mapped to listPrice)
   stockQuantity       Int      @default(0)
   dataSheetUrl        String?
   createdAt           DateTime @default(now())

@@ -1,0 +1,526 @@
+manufacturer,manufacturerPartNum,description,category,unitPrice,stockQuantity
+"TDK","CC-0805-2965-A","Ceramic Capacitor 50V","Capacitors",2.14,75
+"Bourns","ERJ-0805-4469-B","Thin Film SMD Resistor","Resistors",1.29,1270
+"Microchip","STM32F9950-C","8-bit AVR Microcontroller","Integrated Circuits",184.63,1960
+"Wurth Elektronik","HDR-2X5-5404-D","Terminal Block 3-Pos","Connectors",28.62,4020
+"Samsung Electromechanics","CC-0805-9784-E","Tantalum Capacitor 16V","Capacitors",2.62,2915
+"ROHM","MFR-TH-1502-F","Metal Film Axial","Resistors",1.29,3989
+"NXP","SN74HC-9225-G","8-bit AVR Microcontroller","Integrated Circuits",178.84,4127
+"JST","RJ45-8P8C-2412-H","USB Type-C Receptacle","Connectors",38.06,265
+"TDK","TA-1206-8794-I","Electrolytic 25V","Capacitors",2.57,1185
+"Bourns","CRCW-0603-5207-J","Precision Resistor 0.1W","Resistors",1.15,3211
+"Analog Devices","PIC16F-6586-K","Dual Operational Amplifier","Integrated Circuits",204.16,2309
+"Wurth Elektronik","RJ45-8P8C-5670-L","USB Type-C Receptacle","Connectors",28.74,626
+"Murata","CC-0805-4503-M","Tantalum Capacitor 16V","Capacitors",2.35,2323
+"Panasonic","ERJ-0805-9078-N","Thin Film SMD Resistor","Resistors",1.13,4623
+"Microchip","SN74HC-4239-O","32-bit MCU 64KB Flash","Integrated Circuits",192.91,2123
+"JST","HDR-2X5-2516-P","Terminal Block 3-Pos","Connectors",31.69,1940
+"Vishay","CC-0805-1180-Q","SMD MLCC 10%","Capacitors",2.96,1560
+"ROHM","RC-1206-2195-R","Precision Resistor 0.1W","Resistors",1.07,2550
+"Texas Instruments","STM32F2468-S","8-bit PIC MCU","Integrated Circuits",193.17,3116
+"TE Connectivity","TERM-3P-6976-T","USB Type-C Receptacle","Connectors",40.97,461
+"Samsung Electromechanics","EC-RAD-8766-U","Electrolytic 25V","Capacitors",2.37,1175
+"Panasonic","RC-1206-8378-V","Thin Film SMD Resistor","Resistors",1.28,82
+"STMicroelectronics","LM358-9970-W","8-bit AVR Microcontroller","Integrated Circuits",199.52,548
+"Molex","HDR-2X5-8098-X","Pin Header 2.54mm Pitch","Connectors",35.18,1219
+"Murata","TA-1206-9622-Y","SMD MLCC 10%","Capacitors",2.21,2511
+"Panasonic","RC-1206-4611-Z","Thin Film SMD Resistor","Resistors",1.20,4949
+"Microchip","ATMEGA-1262-A","32-bit MCU 64KB Flash","Integrated Circuits",193.61,2667
+"JST","RJ45-8P8C-5854-B","Modular Jack Shielded","Connectors",32.65,486
+"Vishay","CC-0805-6536-C","Electrolytic 25V","Capacitors",2.25,2386
+"ROHM","MFR-TH-1259-D","Thin Film SMD Resistor","Resistors",1.06,3274
+"Microchip","STM32F7381-E","8-bit AVR Microcontroller","Integrated Circuits",171.29,1020
+"JST","HDR-2X5-1619-F","Terminal Block 3-Pos","Connectors",28.35,3726
+"Vishay","MLCC-0402-3462-G","Ceramic Capacitor 50V","Capacitors",2.77,4057
+"Vishay","ERJ-0805-1102-H","Metal Film Axial","Resistors",1.15,3198
+"STMicroelectronics","PIC16F-6943-I","NAND Gate Quad 2-Input","Integrated Circuits",200.58,1792
+"Molex","HDR-2X5-5835-J","Modular Jack Shielded","Connectors",36.64,865
+"Murata","EC-RAD-4120-K","Electrolytic 25V","Capacitors",2.03,1900
+"Vishay","CRCW-0603-7810-L","Thick Film Resistor 1%","Resistors",1.07,2439
+"NXP","PIC16F-3490-M","NAND Gate Quad 2-Input","Integrated Circuits",199.51,1245
+"Amphenol","USBC-REC-5147-N","Modular Jack Shielded","Connectors",29.97,2954
+"Samsung Electromechanics","TA-1206-7058-O","Tantalum Capacitor 16V","Capacitors",2.58,4185
+"Vishay","MFR-TH-5015-P","Precision Resistor 0.1W","Resistors",1.27,439
+"NXP","SN74HC-2674-Q","32-bit MCU 64KB Flash","Integrated Circuits",185.71,4494
+"Wurth Elektronik","HDR-2X5-1796-R","Terminal Block 3-Pos","Connectors",38.35,2565
+"Samsung Electromechanics","CC-0805-9291-S","Tantalum Capacitor 16V","Capacitors",2.40,3513
+"Bourns","ERJ-0805-5266-T","Thick Film Resistor 1%","Resistors",1.20,3409
+"STMicroelectronics","LM358-2238-U","32-bit MCU 64KB Flash","Integrated Circuits",164.54,3924
+"Wurth Elektronik","HDR-2X5-6934-V","Terminal Block 3-Pos","Connectors",31.23,2210
+"Murata","EC-RAD-6544-W","Ceramic Capacitor 50V","Capacitors",2.74,3263
+"Bourns","RC-1206-9784-X","Thin Film SMD Resistor","Resistors",1.21,2183
+"Texas Instruments","ATMEGA-5295-Y","8-bit PIC MCU","Integrated Circuits",154.66,3553
+"Wurth Elektronik","HDR-2X5-9399-Z","Pin Header 2.54mm Pitch","Connectors",35.07,4834
+"Vishay","EC-RAD-7192-A","SMD MLCC 10%","Capacitors",2.86,2794
+"Vishay","CRCW-0603-4999-B","Metal Film Axial","Resistors",1.14,4923
+"Analog Devices","LM358-2013-C","NAND Gate Quad 2-Input","Integrated Circuits",185.91,1569
+"Amphenol","TERM-3P-3248-D","USB Type-C Receptacle","Connectors",30.84,3034
+"Samsung Electromechanics","CC-0805-3473-E","Electrolytic 25V","Capacitors",2.48,500
+"Bourns","ERJ-0805-9615-F","Thick Film Resistor 1%","Resistors",1.00,2735
+"Texas Instruments","ATMEGA-1539-G","Dual Operational Amplifier","Integrated Circuits",184.21,975
+"Wurth Elektronik","HDR-2X5-6858-H","Pin Header 2.54mm Pitch","Connectors",32.09,4717
+"Murata","TA-1206-2962-I","SMD MLCC 10%","Capacitors",2.08,550
+"Bourns","ERJ-0805-2512-J","Precision Resistor 0.1W","Resistors",1.03,2507
+"Analog Devices","LM358-7723-K","NAND Gate Quad 2-Input","Integrated Circuits",157.26,3496
+"Molex","RJ45-8P8C-6191-L","USB Type-C Receptacle","Connectors",37.94,2379
+"Murata","CC-0805-1013-M","Tantalum Capacitor 16V","Capacitors",2.03,3174
+"Panasonic","ERJ-0805-1449-N","Thin Film SMD Resistor","Resistors",1.20,337
+"Analog Devices","LM358-6316-O","32-bit MCU 64KB Flash","Integrated Circuits",220.48,3961
+"Wurth Elektronik","TERM-3P-9185-P","Pin Header 2.54mm Pitch","Connectors",31.66,2036
+"Murata","TA-1206-5806-Q","Ceramic Capacitor 50V","Capacitors",2.67,3662
+"Panasonic","RC-1206-7067-R","Thick Film Resistor 1%","Resistors",1.14,3937
+"Analog Devices","ATMEGA-5797-S","8-bit PIC MCU","Integrated Circuits",177.76,4616
+"Wurth Elektronik","USBC-REC-5508-T","USB Type-C Receptacle","Connectors",28.94,3530
+"KEMET","TA-1206-6375-U","SMD MLCC 10%","Capacitors",2.18,3432
+"Vishay","MFR-TH-1963-V","Metal Film Axial","Resistors",1.25,2397
+"Analog Devices","STM32F4527-W","8-bit PIC MCU","Integrated Circuits",211.90,1101
+"Wurth Elektronik","RJ45-8P8C-2134-X","Pin Header 2.54mm Pitch","Connectors",39.41,1144
+"Vishay","EC-RAD-1018-Y","Tantalum Capacitor 16V","Capacitors",2.42,1698
+"Yageo","ERJ-0805-2420-Z","Metal Film Axial","Resistors",1.00,2305
+"Microchip","ATMEGA-6399-A","Dual Operational Amplifier","Integrated Circuits",214.22,3016
+"TE Connectivity","HDR-2X5-4389-B","USB Type-C Receptacle","Connectors",31.66,4701
+"Murata","MLCC-0402-4805-C","SMD MLCC 10%","Capacitors",2.53,91
+"Yageo","RC-1206-3748-D","Metal Film Axial","Resistors",1.24,1189
+"Microchip","SN74HC-9626-E","8-bit PIC MCU","Integrated Circuits",186.37,3156
+"Wurth Elektronik","USBC-REC-6298-F","Terminal Block 3-Pos","Connectors",29.28,3630
+"Samsung Electromechanics","TA-1206-6643-G","Tantalum Capacitor 16V","Capacitors",2.25,1578
+"Panasonic","ERJ-0805-4024-H","Precision Resistor 0.1W","Resistors",1.06,1791
+"NXP","PIC16F-1947-I","8-bit AVR Microcontroller","Integrated Circuits",182.91,856
+"Wurth Elektronik","RJ45-8P8C-2909-J","Modular Jack Shielded","Connectors",38.98,4250
+"Murata","EC-RAD-2550-K","Tantalum Capacitor 16V","Capacitors",2.71,3923
+"ROHM","RC-1206-6595-L","Metal Film Axial","Resistors",1.23,4360
+"NXP","ATMEGA-4376-M","Dual Operational Amplifier","Integrated Circuits",205.31,1573
+"Molex","TERM-3P-9113-N","Terminal Block 3-Pos","Connectors",29.18,3474
+"TDK","TA-1206-5909-O","Tantalum Capacitor 16V","Capacitors",2.45,4079
+"Bourns","MFR-TH-3518-P","Thick Film Resistor 1%","Resistors",1.40,2570
+"STMicroelectronics","SN74HC-2288-Q","Dual Operational Amplifier","Integrated Circuits",173.21,4650
+"JST","USBC-REC-4095-R","Pin Header 2.54mm Pitch","Connectors",41.45,972
+"Samsung Electromechanics","CC-0805-8402-S","SMD MLCC 10%","Capacitors",2.73,4943
+"Vishay","RC-1206-8073-T","Precision Resistor 0.1W","Resistors",1.43,4100
+"Microchip","STM32F9610-U","8-bit PIC MCU","Integrated Circuits",193.91,1413
+"TE Connectivity","HDR-2X5-2879-V","Pin Header 2.54mm Pitch","Connectors",28.11,2861
+"Murata","TA-1206-2795-W","Electrolytic 25V","Capacitors",2.33,1869
+"ROHM","CRCW-0603-6253-X","Thick Film Resistor 1%","Resistors",1.29,4408
+"Microchip","PIC16F-9902-Y","NAND Gate Quad 2-Input","Integrated Circuits",162.99,3081
+"Molex","TERM-3P-6989-Z","USB Type-C Receptacle","Connectors",36.88,3478
+"Vishay","TA-1206-3716-A","SMD MLCC 10%","Capacitors",2.79,4182
+"ROHM","MFR-TH-4181-B","Metal Film Axial","Resistors",1.28,2415
+"Analog Devices","ATMEGA-8360-C","8-bit PIC MCU","Integrated Circuits",171.79,795
+"JST","TERM-3P-5102-D","USB Type-C Receptacle","Connectors",33.84,4835
+"TDK","EC-RAD-9344-E","Tantalum Capacitor 16V","Capacitors",2.57,610
+"Yageo","ERJ-0805-4917-F","Metal Film Axial","Resistors",1.07,821
+"Analog Devices","ATMEGA-3544-G","Dual Operational Amplifier","Integrated Circuits",157.76,776
+"JST","USBC-REC-4909-H","USB Type-C Receptacle","Connectors",41.14,4920
+"Murata","EC-RAD-3234-I","Ceramic Capacitor 50V","Capacitors",2.37,1994
+"Vishay","RC-1206-3829-J","Metal Film Axial","Resistors",1.26,175
+"Analog Devices","PIC16F-5589-K","8-bit PIC MCU","Integrated Circuits",184.14,81
+"Amphenol","TERM-3P-5211-L","Modular Jack Shielded","Connectors",29.27,585
+"Vishay","MLCC-0402-2541-M","SMD MLCC 10%","Capacitors",2.54,3500
+"Panasonic","RC-1206-6383-N","Thin Film SMD Resistor","Resistors",1.11,1738
+"Texas Instruments","PIC16F-6695-O","32-bit MCU 64KB Flash","Integrated Circuits",162.17,2429
+"Molex","TERM-3P-9407-P","USB Type-C Receptacle","Connectors",41.79,4808
+"Samsung Electromechanics","TA-1206-1849-Q","Ceramic Capacitor 50V","Capacitors",2.05,4423
+"Vishay","MFR-TH-1444-R","Thin Film SMD Resistor","Resistors",1.20,1892
+"Texas Instruments","SN74HC-6349-S","8-bit PIC MCU","Integrated Circuits",170.35,3766
+"Wurth Elektronik","HDR-2X5-6822-T","USB Type-C Receptacle","Connectors",32.55,2207
+"TDK","CC-0805-9547-U","Ceramic Capacitor 50V","Capacitors",2.69,3305
+"Vishay","ERJ-0805-3699-V","Precision Resistor 0.1W","Resistors",1.13,449
+"STMicroelectronics","ATMEGA-5081-W","Dual Operational Amplifier","Integrated Circuits",205.56,4627
+"TE Connectivity","USBC-REC-7655-X","Pin Header 2.54mm Pitch","Connectors",40.25,4591
+"KEMET","TA-1206-4524-Y","Tantalum Capacitor 16V","Capacitors",2.33,610
+"Panasonic","ERJ-0805-5708-Z","Thin Film SMD Resistor","Resistors",1.44,2601
+"NXP","PIC16F-4871-A","Dual Operational Amplifier","Integrated Circuits",183.20,2217
+"TE Connectivity","HDR-2X5-7869-B","USB Type-C Receptacle","Connectors",40.04,2546
+"Murata","TA-1206-9313-C","SMD MLCC 10%","Capacitors",2.07,3689
+"Yageo","CRCW-0603-9306-D","Thin Film SMD Resistor","Resistors",1.06,4518
+"Analog Devices","ATMEGA-4958-E","8-bit AVR Microcontroller","Integrated Circuits",219.90,1168
+"Wurth Elektronik","USBC-REC-4340-F","Pin Header 2.54mm Pitch","Connectors",29.85,3330
+"TDK","MLCC-0402-7863-G","Tantalum Capacitor 16V","Capacitors",2.56,1054
+"Vishay","RC-1206-1735-H","Precision Resistor 0.1W","Resistors",0.97,4043
+"STMicroelectronics","PIC16F-2975-I","NAND Gate Quad 2-Input","Integrated Circuits",219.41,96
+"Wurth Elektronik","HDR-2X5-6299-J","USB Type-C Receptacle","Connectors",31.52,3545
+"TDK","TA-1206-6875-K","SMD MLCC 10%","Capacitors",2.65,2320
+"Yageo","ERJ-0805-9453-L","Thick Film Resistor 1%","Resistors",1.44,3114
+"Texas Instruments","PIC16F-2677-M","Dual Operational Amplifier","Integrated Circuits",154.93,4294
+"Amphenol","HDR-2X5-8819-N","USB Type-C Receptacle","Connectors",32.75,1722
+"TDK","EC-RAD-9339-O","SMD MLCC 10%","Capacitors",2.42,4000
+"ROHM","MFR-TH-6778-P","Precision Resistor 0.1W","Resistors",1.38,1163
+"STMicroelectronics","PIC16F-1558-Q","8-bit PIC MCU","Integrated Circuits",190.62,2381
+"JST","HDR-2X5-2959-R","Modular Jack Shielded","Connectors",41.97,2559
+"KEMET","TA-1206-2919-S","SMD MLCC 10%","Capacitors",2.44,4888
+"Bourns","CRCW-0603-5858-T","Thin Film SMD Resistor","Resistors",1.10,320
+"STMicroelectronics","PIC16F-3371-U","32-bit MCU 64KB Flash","Integrated Circuits",165.17,3238
+"TE Connectivity","TERM-3P-6949-V","USB Type-C Receptacle","Connectors",37.14,4176
+"KEMET","CC-0805-3267-W","Ceramic Capacitor 50V","Capacitors",2.50,4807
+"Vishay","RC-1206-7500-X","Precision Resistor 0.1W","Resistors",1.30,2376
+"Microchip","SN74HC-1696-Y","NAND Gate Quad 2-Input","Integrated Circuits",162.29,4905
+"TE Connectivity","RJ45-8P8C-6668-Z","Pin Header 2.54mm Pitch","Connectors",28.29,2160
+"Murata","MLCC-0402-7771-A","Tantalum Capacitor 16V","Capacitors",2.60,4291
+"Vishay","ERJ-0805-1382-B","Thin Film SMD Resistor","Resistors",1.14,1392
+"Texas Instruments","LM358-5866-C","Dual Operational Amplifier","Integrated Circuits",181.80,2791
+"Wurth Elektronik","HDR-2X5-2350-D","USB Type-C Receptacle","Connectors",36.82,2552
+"Samsung Electromechanics","EC-RAD-1862-E","Ceramic Capacitor 50V","Capacitors",2.26,367
+"Yageo","ERJ-0805-8344-F","Metal Film Axial","Resistors",1.16,3191
+"STMicroelectronics","ATMEGA-7816-G","32-bit MCU 64KB Flash","Integrated Circuits",213.54,3999
+"TE Connectivity","HDR-2X5-7053-H","USB Type-C Receptacle","Connectors",38.25,3243
+"Murata","TA-1206-2465-I","Ceramic Capacitor 50V","Capacitors",2.73,3370
+"Bourns","RC-1206-7515-J","Metal Film Axial","Resistors",1.12,3562
+"NXP","STM32F9267-K","8-bit AVR Microcontroller","Integrated Circuits",203.36,4304
+"JST","USBC-REC-8274-L","Pin Header 2.54mm Pitch","Connectors",31.48,4008
+"KEMET","EC-RAD-8160-M","SMD MLCC 10%","Capacitors",2.97,1413
+"Panasonic","RC-1206-1807-N","Precision Resistor 0.1W","Resistors",1.12,3578
+"STMicroelectronics","STM32F8800-O","Dual Operational Amplifier","Integrated Circuits",182.95,3528
+"Amphenol","USBC-REC-1677-P","USB Type-C Receptacle","Connectors",41.27,3695
+"KEMET","EC-RAD-3567-Q","SMD MLCC 10%","Capacitors",2.89,1685
+"Panasonic","MFR-TH-4514-R","Precision Resistor 0.1W","Resistors",1.01,2872
+"Analog Devices","ATMEGA-8034-S","Dual Operational Amplifier","Integrated Circuits",168.02,3787
+"Molex","RJ45-8P8C-3009-T","Modular Jack Shielded","Connectors",30.66,94
+"Murata","CC-0805-3095-U","Tantalum Capacitor 16V","Capacitors",2.38,3617
+"Bourns","RC-1206-3429-V","Precision Resistor 0.1W","Resistors",1.36,4809
+"NXP","ATMEGA-5340-W","NAND Gate Quad 2-Input","Integrated Circuits",162.52,616
+"JST","RJ45-8P8C-1230-X","Terminal Block 3-Pos","Connectors",40.06,109
+"TDK","EC-RAD-6237-Y","Electrolytic 25V","Capacitors",2.59,401
+"ROHM","ERJ-0805-1143-Z","Thick Film Resistor 1%","Resistors",1.08,3373
+"NXP","ATMEGA-9716-A","Dual Operational Amplifier","Integrated Circuits",157.69,3049
+"TE Connectivity","HDR-2X5-5552-B","Modular Jack Shielded","Connectors",40.07,4257
+"Murata","EC-RAD-2449-C","Tantalum Capacitor 16V","Capacitors",2.95,1408
+"Yageo","MFR-TH-5397-D","Precision Resistor 0.1W","Resistors",1.36,3407
+"Texas Instruments","SN74HC-4987-E","32-bit MCU 64KB Flash","Integrated Circuits",214.51,3794
+"Molex","HDR-2X5-1599-F","Terminal Block 3-Pos","Connectors",37.13,2388
+"KEMET","CC-0805-7254-G","SMD MLCC 10%","Capacitors",2.78,706
+"ROHM","RC-1206-9021-H","Precision Resistor 0.1W","Resistors",1.04,4181
+"Analog Devices","SN74HC-2260-I","Dual Operational Amplifier","Integrated Circuits",220.18,1507
+"TE Connectivity","HDR-2X5-7787-J","Terminal Block 3-Pos","Connectors",40.50,424
+"KEMET","EC-RAD-9168-K","Electrolytic 25V","Capacitors",2.57,3537
+"ROHM","MFR-TH-2750-L","Metal Film Axial","Resistors",1.43,490
+"Texas Instruments","LM358-3570-M","NAND Gate Quad 2-Input","Integrated Circuits",182.17,4700
+"Wurth Elektronik","USBC-REC-5528-N","Pin Header 2.54mm Pitch","Connectors",41.14,4137
+"Samsung Electromechanics","TA-1206-4247-O","SMD MLCC 10%","Capacitors",2.59,3097
+"Vishay","CRCW-0603-8096-P","Thin Film SMD Resistor","Resistors",1.04,3066
+"Texas Instruments","ATMEGA-5883-Q","32-bit MCU 64KB Flash","Integrated Circuits",178.45,2532
+"Amphenol","USBC-REC-3807-R","USB Type-C Receptacle","Connectors",33.23,3156
+"KEMET","TA-1206-3576-S","Electrolytic 25V","Capacitors",2.76,4246
+"Yageo","ERJ-0805-6778-T","Thick Film Resistor 1%","Resistors",1.43,4554
+"Microchip","SN74HC-5698-U","NAND Gate Quad 2-Input","Integrated Circuits",193.06,4204
+"TE Connectivity","USBC-REC-8049-V","Pin Header 2.54mm Pitch","Connectors",37.04,4077
+"Samsung Electromechanics","TA-1206-2437-W","Tantalum Capacitor 16V","Capacitors",2.29,4199
+"Vishay","CRCW-0603-6500-X","Metal Film Axial","Resistors",1.30,4645
+"Microchip","SN74HC-9361-Y","8-bit AVR Microcontroller","Integrated Circuits",150.98,2698
+"Wurth Elektronik","RJ45-8P8C-1516-Z","Pin Header 2.54mm Pitch","Connectors",35.89,2889
+"Samsung Electromechanics","TA-1206-4917-A","Ceramic Capacitor 50V","Capacitors",2.96,494
+"ROHM","CRCW-0603-8095-B","Thick Film Resistor 1%","Resistors",1.10,3533
+"Analog Devices","LM358-9394-C","32-bit MCU 64KB Flash","Integrated Circuits",211.99,76
+"Molex","HDR-2X5-9391-D","Modular Jack Shielded","Connectors",41.08,4961
+"KEMET","CC-0805-7166-E","SMD MLCC 10%","Capacitors",2.94,1629
+"ROHM","CRCW-0603-5077-F","Metal Film Axial","Resistors",1.27,4210
+"Texas Instruments","PIC16F-4529-G","8-bit AVR Microcontroller","Integrated Circuits",210.74,4159
+"Amphenol","TERM-3P-3279-H","Modular Jack Shielded","Connectors",41.26,3601
+"Vishay","MLCC-0402-2942-I","Electrolytic 25V","Capacitors",2.77,900
+"ROHM","CRCW-0603-9177-J","Thick Film Resistor 1%","Resistors",1.01,3922
+"NXP","STM32F8134-K","8-bit PIC MCU","Integrated Circuits",193.54,3503
+"Wurth Elektronik","TERM-3P-3201-L","USB Type-C Receptacle","Connectors",28.34,554
+"Samsung Electromechanics","MLCC-0402-4232-M","Tantalum Capacitor 16V","Capacitors",2.31,4076
+"Panasonic","RC-1206-9242-N","Thick Film Resistor 1%","Resistors",0.97,4314
+"NXP","LM358-5796-O","Dual Operational Amplifier","Integrated Circuits",185.59,3025
+"Wurth Elektronik","TERM-3P-2842-P","Modular Jack Shielded","Connectors",37.53,4541
+"Murata","EC-RAD-7026-Q","Tantalum Capacitor 16V","Capacitors",2.05,2162
+"Vishay","RC-1206-4872-R","Thick Film Resistor 1%","Resistors",1.28,3608
+"Analog Devices","ATMEGA-6784-S","NAND Gate Quad 2-Input","Integrated Circuits",159.75,4527
+"TE Connectivity","RJ45-8P8C-3661-T","Pin Header 2.54mm Pitch","Connectors",29.61,1309
+"KEMET","CC-0805-1797-U","Ceramic Capacitor 50V","Capacitors",2.22,4897
+"Bourns","RC-1206-9271-V","Thin Film SMD Resistor","Resistors",1.42,1996
+"Microchip","ATMEGA-1362-W","Dual Operational Amplifier","Integrated Circuits",184.90,4831
+"Wurth Elektronik","HDR-2X5-4516-X","Modular Jack Shielded","Connectors",34.14,4311
+"Murata","MLCC-0402-7709-Y","Electrolytic 25V","Capacitors",2.29,93
+"Yageo","ERJ-0805-6890-Z","Metal Film Axial","Resistors",1.11,691
+"Analog Devices","ATMEGA-5996-A","8-bit AVR Microcontroller","Integrated Circuits",179.11,2775
+"JST","TERM-3P-5836-B","Terminal Block 3-Pos","Connectors",36.63,4878
+"Vishay","CC-0805-9240-C","Ceramic Capacitor 50V","Capacitors",2.57,4919
+"ROHM","MFR-TH-9492-D","Precision Resistor 0.1W","Resistors",1.14,2604
+"NXP","ATMEGA-4677-E","8-bit PIC MCU","Integrated Circuits",200.34,3610
+"TE Connectivity","USBC-REC-1051-F","Terminal Block 3-Pos","Connectors",31.40,4621
+"TDK","CC-0805-5059-G","Ceramic Capacitor 50V","Capacitors",2.71,1686
+"Yageo","MFR-TH-5946-H","Thin Film SMD Resistor","Resistors",0.97,3927
+"Analog Devices","LM358-8842-I","Dual Operational Amplifier","Integrated Circuits",191.71,3880
+"Amphenol","USBC-REC-8886-J","Modular Jack Shielded","Connectors",34.41,1757
+"Vishay","MLCC-0402-3839-K","Electrolytic 25V","Capacitors",2.91,2329
+"ROHM","MFR-TH-6129-L","Thin Film SMD Resistor","Resistors",1.29,4885
+"Microchip","ATMEGA-1821-M","32-bit MCU 64KB Flash","Integrated Circuits",173.26,4559
+"TE Connectivity","RJ45-8P8C-1126-N","USB Type-C Receptacle","Connectors",36.66,2191
+"KEMET","EC-RAD-9965-O","Tantalum Capacitor 16V","Capacitors",2.59,1189
+"Yageo","CRCW-0603-7241-P","Thick Film Resistor 1%","Resistors",1.09,3921
+"STMicroelectronics","SN74HC-7052-Q","8-bit AVR Microcontroller","Integrated Circuits",173.70,369
+"TE Connectivity","RJ45-8P8C-3572-R","USB Type-C Receptacle","Connectors",37.18,784
+"Samsung Electromechanics","EC-RAD-6605-S","SMD MLCC 10%","Capacitors",2.70,1302
+"Bourns","ERJ-0805-4467-T","Thin Film SMD Resistor","Resistors",1.29,347
+"Texas Instruments","ATMEGA-5839-U","NAND Gate Quad 2-Input","Integrated Circuits",153.74,4041
+"Wurth Elektronik","HDR-2X5-6766-V","USB Type-C Receptacle","Connectors",33.21,3931
+"Murata","EC-RAD-6643-W","Electrolytic 25V","Capacitors",2.25,4875
+"Yageo","ERJ-0805-5624-X","Thin Film SMD Resistor","Resistors",1.41,203
+"Microchip","PIC16F-4811-Y","NAND Gate Quad 2-Input","Integrated Circuits",164.42,527
+"Wurth Elektronik","RJ45-8P8C-3267-Z","Modular Jack Shielded","Connectors",28.92,2609
+"Samsung Electromechanics","TA-1206-3520-A","Tantalum Capacitor 16V","Capacitors",2.25,3094
+"Vishay","MFR-TH-7163-B","Thick Film Resistor 1%","Resistors",1.01,4713
+"Microchip","STM32F2163-C","8-bit AVR Microcontroller","Integrated Circuits",153.12,3592
+"JST","TERM-3P-7702-D","Modular Jack Shielded","Connectors",33.26,3446
+"Samsung Electromechanics","CC-0805-3223-E","Tantalum Capacitor 16V","Capacitors",2.10,3874
+"Yageo","RC-1206-8450-F","Thin Film SMD Resistor","Resistors",1.15,3395
+"Microchip","LM358-3081-G","8-bit PIC MCU","Integrated Circuits",160.19,3094
+"Molex","RJ45-8P8C-6205-H","Modular Jack Shielded","Connectors",28.52,3425
+"Vishay","MLCC-0402-6333-I","SMD MLCC 10%","Capacitors",2.12,2349
+"Panasonic","RC-1206-3277-J","Thin Film SMD Resistor","Resistors",1.26,3013
+"STMicroelectronics","ATMEGA-9420-K","NAND Gate Quad 2-Input","Integrated Circuits",216.55,1573
+"Amphenol","USBC-REC-9072-L","Pin Header 2.54mm Pitch","Connectors",39.60,102
+"Samsung Electromechanics","MLCC-0402-9180-M","Electrolytic 25V","Capacitors",2.81,4594
+"Yageo","CRCW-0603-7715-N","Precision Resistor 0.1W","Resistors",1.41,2443
+"Analog Devices","STM32F1528-O","32-bit MCU 64KB Flash","Integrated Circuits",177.81,301
+"Molex","USBC-REC-2485-P","Pin Header 2.54mm Pitch","Connectors",29.64,1230
+"Samsung Electromechanics","MLCC-0402-8232-Q","Tantalum Capacitor 16V","Capacitors",2.47,4795
+"Panasonic","CRCW-0603-4906-R","Thin Film SMD Resistor","Resistors",1.41,2442
+"STMicroelectronics","STM32F8519-S","8-bit AVR Microcontroller","Integrated Circuits",156.22,1120
+"JST","TERM-3P-4775-T","Modular Jack Shielded","Connectors",29.56,653
+"Samsung Electromechanics","EC-RAD-5791-U","Tantalum Capacitor 16V","Capacitors",2.48,4255
+"ROHM","MFR-TH-2341-V","Metal Film Axial","Resistors",1.04,4193
+"Microchip","PIC16F-4295-W","NAND Gate Quad 2-Input","Integrated Circuits",185.11,1818
+"Amphenol","RJ45-8P8C-2958-X","Modular Jack Shielded","Connectors",35.64,4742
+"Samsung Electromechanics","EC-RAD-7759-Y","Tantalum Capacitor 16V","Capacitors",2.82,995
+"Bourns","RC-1206-4472-Z","Metal Film Axial","Resistors",1.39,4416
+"Microchip","SN74HC-7088-A","8-bit AVR Microcontroller","Integrated Circuits",176.27,794
+"Wurth Elektronik","RJ45-8P8C-3161-B","Modular Jack Shielded","Connectors",34.02,518
+"Samsung Electromechanics","EC-RAD-9048-C","Ceramic Capacitor 50V","Capacitors",2.87,835
+"Panasonic","RC-1206-7548-D","Metal Film Axial","Resistors",1.33,2731
+"Analog Devices","ATMEGA-1568-E","NAND Gate Quad 2-Input","Integrated Circuits",212.82,2468
+"Wurth Elektronik","HDR-2X5-4780-F","Terminal Block 3-Pos","Connectors",28.35,361
+"Murata","CC-0805-7449-G","Tantalum Capacitor 16V","Capacitors",2.30,4456
+"Vishay","ERJ-0805-8480-H","Precision Resistor 0.1W","Resistors",1.04,1711
+"NXP","PIC16F-3279-I","8-bit PIC MCU","Integrated Circuits",175.86,3160
+"TE Connectivity","HDR-2X5-4284-J","Modular Jack Shielded","Connectors",38.88,3703
+"Vishay","MLCC-0402-4627-K","Ceramic Capacitor 50V","Capacitors",2.93,3305
+"ROHM","ERJ-0805-2258-L","Thick Film Resistor 1%","Resistors",1.00,2067
+"NXP","SN74HC-8950-M","32-bit MCU 64KB Flash","Integrated Circuits",209.73,340
+"TE Connectivity","TERM-3P-8622-N","Pin Header 2.54mm Pitch","Connectors",39.97,294
+"Murata","MLCC-0402-1718-O","Ceramic Capacitor 50V","Capacitors",2.32,2340
+"Yageo","ERJ-0805-1717-P","Thick Film Resistor 1%","Resistors",1.05,1995
+"Microchip","SN74HC-4722-Q","8-bit AVR Microcontroller","Integrated Circuits",193.78,4724
+"JST","USBC-REC-8339-R","USB Type-C Receptacle","Connectors",31.80,4333
+"TDK","EC-RAD-2293-S","Tantalum Capacitor 16V","Capacitors",2.22,382
+"Panasonic","ERJ-0805-7389-T","Thick Film Resistor 1%","Resistors",1.21,3748
+"Analog Devices","STM32F2244-U","Dual Operational Amplifier","Integrated Circuits",175.24,3227
+"JST","RJ45-8P8C-4976-V","Modular Jack Shielded","Connectors",29.77,1081
+"Vishay","TA-1206-9532-W","Tantalum Capacitor 16V","Capacitors",2.37,654
+"Panasonic","MFR-TH-2499-X","Metal Film Axial","Resistors",1.32,2820
+"Microchip","SN74HC-1667-Y","Dual Operational Amplifier","Integrated Circuits",211.14,1955
+"Wurth Elektronik","USBC-REC-1660-Z","Pin Header 2.54mm Pitch","Connectors",29.85,2939
+"KEMET","CC-0805-6140-A","Tantalum Capacitor 16V","Capacitors",2.29,3757
+"Yageo","RC-1206-5052-B","Thick Film Resistor 1%","Resistors",1.27,3344
+"NXP","PIC16F-4468-C","Dual Operational Amplifier","Integrated Circuits",214.54,1791
+"Molex","USBC-REC-9404-D","Pin Header 2.54mm Pitch","Connectors",33.13,4379
+"TDK","CC-0805-8836-E","Ceramic Capacitor 50V","Capacitors",2.68,839
+"Panasonic","ERJ-0805-3162-F","Metal Film Axial","Resistors",1.16,3500
+"Microchip","STM32F2534-G","NAND Gate Quad 2-Input","Integrated Circuits",153.22,2195
+"TE Connectivity","RJ45-8P8C-3332-H","Pin Header 2.54mm Pitch","Connectors",41.02,3714
+"TDK","TA-1206-4185-I","Ceramic Capacitor 50V","Capacitors",2.82,558
+"Bourns","RC-1206-6571-J","Metal Film Axial","Resistors",1.35,294
+"NXP","LM358-6565-K","Dual Operational Amplifier","Integrated Circuits",200.17,1527
+"TE Connectivity","HDR-2X5-5745-L","Modular Jack Shielded","Connectors",36.63,1689
+"Samsung Electromechanics","TA-1206-1710-M","Ceramic Capacitor 50V","Capacitors",2.10,3505
+"Yageo","CRCW-0603-4514-N","Precision Resistor 0.1W","Resistors",1.33,4947
+"Texas Instruments","STM32F6685-O","NAND Gate Quad 2-Input","Integrated Circuits",205.66,3406
+"Wurth Elektronik","HDR-2X5-5158-P","Terminal Block 3-Pos","Connectors",34.37,4168
+"Vishay","CC-0805-6116-Q","Ceramic Capacitor 50V","Capacitors",2.92,1834
+"Bourns","RC-1206-3550-R","Thin Film SMD Resistor","Resistors",1.33,4573
+"NXP","STM32F5039-S","32-bit MCU 64KB Flash","Integrated Circuits",182.76,928
+"TE Connectivity","RJ45-8P8C-8497-T","Terminal Block 3-Pos","Connectors",38.26,4219
+"TDK","MLCC-0402-7972-U","Tantalum Capacitor 16V","Capacitors",2.33,4519
+"Vishay","MFR-TH-7652-V","Thick Film Resistor 1%","Resistors",1.42,1167
+"NXP","SN74HC-4378-W","32-bit MCU 64KB Flash","Integrated Circuits",192.77,3619
+"Amphenol","USBC-REC-6505-X","Terminal Block 3-Pos","Connectors",31.94,4185
+"TDK","EC-RAD-7052-Y","SMD MLCC 10%","Capacitors",2.87,397
+"ROHM","RC-1206-5403-Z","Thick Film Resistor 1%","Resistors",1.29,1397
+"Microchip","PIC16F-5511-A","8-bit PIC MCU","Integrated Circuits",215.85,2246
+"TE Connectivity","HDR-2X5-5584-B","USB Type-C Receptacle","Connectors",38.67,2021
+"Samsung Electromechanics","EC-RAD-2529-C","Ceramic Capacitor 50V","Capacitors",2.23,3110
+"ROHM","MFR-TH-4879-D","Thick Film Resistor 1%","Resistors",1.17,4302
+"NXP","SN74HC-3979-E","NAND Gate Quad 2-Input","Integrated Circuits",203.02,3086
+"JST","TERM-3P-6520-F","Pin Header 2.54mm Pitch","Connectors",28.79,1244
+"KEMET","TA-1206-2979-G","Tantalum Capacitor 16V","Capacitors",2.09,2194
+"Vishay","MFR-TH-5535-H","Metal Film Axial","Resistors",1.12,2022
+"Texas Instruments","SN74HC-5195-I","32-bit MCU 64KB Flash","Integrated Circuits",152.44,1061
+"Molex","RJ45-8P8C-2955-J","Terminal Block 3-Pos","Connectors",30.87,1736
+"Murata","TA-1206-4341-K","Electrolytic 25V","Capacitors",2.99,4904
+"Yageo","MFR-TH-3254-L","Thick Film Resistor 1%","Resistors",1.43,3048
+"NXP","LM358-2115-M","8-bit PIC MCU","Integrated Circuits",215.74,1203
+"JST","TERM-3P-8264-N","USB Type-C Receptacle","Connectors",30.81,3481
+"TDK","TA-1206-9872-O","Electrolytic 25V","Capacitors",2.87,1012
+"Panasonic","RC-1206-9723-P","Precision Resistor 0.1W","Resistors",1.11,2513
+"NXP","PIC16F-8068-Q","8-bit PIC MCU","Integrated Circuits",170.35,1017
+"TE Connectivity","TERM-3P-3963-R","Pin Header 2.54mm Pitch","Connectors",34.76,4610
+"KEMET","MLCC-0402-3972-S","SMD MLCC 10%","Capacitors",2.52,3556
+"ROHM","ERJ-0805-1674-T","Precision Resistor 0.1W","Resistors",1.01,524
+"Microchip","LM358-6875-U","Dual Operational Amplifier","Integrated Circuits",208.47,2679
+"TE Connectivity","RJ45-8P8C-3425-V","Modular Jack Shielded","Connectors",41.46,2016
+"Murata","TA-1206-6655-W","SMD MLCC 10%","Capacitors",2.29,166
+"Yageo","ERJ-0805-4859-X","Precision Resistor 0.1W","Resistors",1.23,4752
+"STMicroelectronics","ATMEGA-2066-Y","8-bit PIC MCU","Integrated Circuits",177.93,3041
+"Amphenol","USBC-REC-2202-Z","Modular Jack Shielded","Connectors",32.62,3206
+"KEMET","EC-RAD-9162-A","Tantalum Capacitor 16V","Capacitors",2.48,1963
+"ROHM","RC-1206-6953-B","Thick Film Resistor 1%","Resistors",1.03,1267
+"Texas Instruments","LM358-8828-C","Dual Operational Amplifier","Integrated Circuits",218.16,4767
+"TE Connectivity","TERM-3P-5743-D","Modular Jack Shielded","Connectors",30.39,915
+"Murata","TA-1206-9605-E","Electrolytic 25V","Capacitors",2.65,3536
+"Yageo","MFR-TH-1133-F","Metal Film Axial","Resistors",1.18,1079
+"Analog Devices","LM358-8248-G","8-bit PIC MCU","Integrated Circuits",221.03,4027
+"Molex","RJ45-8P8C-4096-H","Pin Header 2.54mm Pitch","Connectors",41.42,3932
+"Samsung Electromechanics","EC-RAD-7861-I","Ceramic Capacitor 50V","Capacitors",2.66,2298
+"ROHM","CRCW-0603-4275-J","Precision Resistor 0.1W","Resistors",1.30,1170
+"NXP","SN74HC-3377-K","8-bit AVR Microcontroller","Integrated Circuits",152.43,1630
+"TE Connectivity","TERM-3P-7548-L","USB Type-C Receptacle","Connectors",37.87,3149
+"TDK","EC-RAD-8443-M","Ceramic Capacitor 50V","Capacitors",2.63,2218
+"Vishay","CRCW-0603-6774-N","Metal Film Axial","Resistors",1.06,3423
+"Analog Devices","SN74HC-1928-O","8-bit AVR Microcontroller","Integrated Circuits",185.99,4182
+"JST","TERM-3P-4853-P","USB Type-C Receptacle","Connectors",41.63,4299
+"Murata","CC-0805-5556-Q","Ceramic Capacitor 50V","Capacitors",2.05,4660
+"Panasonic","RC-1206-3535-R","Metal Film Axial","Resistors",1.22,1778
+"Texas Instruments","SN74HC-5817-S","8-bit PIC MCU","Integrated Circuits",221.35,4857
+"JST","RJ45-8P8C-4014-T","Pin Header 2.54mm Pitch","Connectors",38.94,2270
+"Vishay","TA-1206-3922-U","SMD MLCC 10%","Capacitors",2.28,1230
+"Bourns","CRCW-0603-6944-V","Thick Film Resistor 1%","Resistors",1.21,4731
+"Texas Instruments","LM358-1270-W","NAND Gate Quad 2-Input","Integrated Circuits",176.57,4095
+"JST","HDR-2X5-6736-X","Modular Jack Shielded","Connectors",29.03,1983
+"Murata","MLCC-0402-3347-Y","Ceramic Capacitor 50V","Capacitors",2.12,4751
+"Panasonic","MFR-TH-7963-Z","Precision Resistor 0.1W","Resistors",1.26,3491
+"NXP","PIC16F-6924-A","32-bit MCU 64KB Flash","Integrated Circuits",204.61,2549
+"Amphenol","TERM-3P-4780-B","Terminal Block 3-Pos","Connectors",28.91,3561
+"Vishay","MLCC-0402-1546-C","Ceramic Capacitor 50V","Capacitors",2.88,3765
+"Panasonic","RC-1206-5696-D","Metal Film Axial","Resistors",1.33,3104
+"Analog Devices","STM32F7991-E","Dual Operational Amplifier","Integrated Circuits",217.51,2612
+"Wurth Elektronik","HDR-2X5-8719-F","Modular Jack Shielded","Connectors",30.97,3159
+"KEMET","CC-0805-4936-G","Tantalum Capacitor 16V","Capacitors",2.70,2955
+"Panasonic","RC-1206-1802-H","Metal Film Axial","Resistors",1.35,3831
+"Texas Instruments","SN74HC-7926-I","NAND Gate Quad 2-Input","Integrated Circuits",203.64,1944
+"Wurth Elektronik","TERM-3P-1831-J","Pin Header 2.54mm Pitch","Connectors",29.43,791
+"Vishay","TA-1206-7673-K","SMD MLCC 10%","Capacitors",2.61,539
+"Yageo","MFR-TH-5727-L","Thick Film Resistor 1%","Resistors",1.31,3088
+"Texas Instruments","LM358-9933-M","32-bit MCU 64KB Flash","Integrated Circuits",155.14,3819
+"Amphenol","RJ45-8P8C-8269-N","Pin Header 2.54mm Pitch","Connectors",38.79,3648
+"Murata","MLCC-0402-4554-O","Tantalum Capacitor 16V","Capacitors",2.74,166
+"Panasonic","MFR-TH-1191-P","Metal Film Axial","Resistors",1.11,2217
+"Texas Instruments","SN74HC-7835-Q","32-bit MCU 64KB Flash","Integrated Circuits",207.06,613
+"TE Connectivity","TERM-3P-2156-R","USB Type-C Receptacle","Connectors",30.76,1998
+"Vishay","MLCC-0402-9692-S","Tantalum Capacitor 16V","Capacitors",2.97,1234
+"Bourns","ERJ-0805-6052-T","Metal Film Axial","Resistors",1.36,3457
+"STMicroelectronics","STM32F7583-U","8-bit PIC MCU","Integrated Circuits",176.71,2105
+"Molex","HDR-2X5-4100-V","USB Type-C Receptacle","Connectors",34.24,1059
+"KEMET","EC-RAD-2463-W","Ceramic Capacitor 50V","Capacitors",2.31,3551
+"Yageo","RC-1206-1725-X","Precision Resistor 0.1W","Resistors",1.31,2107
+"NXP","STM32F7639-Y","32-bit MCU 64KB Flash","Integrated Circuits",207.13,2127
+"TE Connectivity","USBC-REC-4687-Z","Terminal Block 3-Pos","Connectors",28.94,925
+"TDK","EC-RAD-8652-A","Electrolytic 25V","Capacitors",2.44,295
+"Yageo","MFR-TH-5367-B","Thick Film Resistor 1%","Resistors",1.38,408
+"NXP","LM358-5026-C","Dual Operational Amplifier","Integrated Circuits",199.43,4949
+"JST","RJ45-8P8C-2139-D","USB Type-C Receptacle","Connectors",37.86,1178
+"KEMET","EC-RAD-9098-E","Tantalum Capacitor 16V","Capacitors",2.65,3555
+"Panasonic","RC-1206-8320-F","Precision Resistor 0.1W","Resistors",1.01,4303
+"Analog Devices","ATMEGA-7627-G","Dual Operational Amplifier","Integrated Circuits",207.44,2149
+"Molex","HDR-2X5-6464-H","Pin Header 2.54mm Pitch","Connectors",33.92,411
+"KEMET","TA-1206-1612-I","SMD MLCC 10%","Capacitors",2.50,963
+"Vishay","ERJ-0805-9072-J","Thick Film Resistor 1%","Resistors",1.17,880
+"NXP","STM32F1934-K","NAND Gate Quad 2-Input","Integrated Circuits",160.74,3934
+"TE Connectivity","HDR-2X5-7994-L","Terminal Block 3-Pos","Connectors",31.81,739
+"KEMET","CC-0805-6438-M","Electrolytic 25V","Capacitors",2.79,3343
+"ROHM","CRCW-0603-5193-N","Precision Resistor 0.1W","Resistors",1.44,1660
+"Analog Devices","PIC16F-9446-O","NAND Gate Quad 2-Input","Integrated Circuits",213.79,4100
+"JST","HDR-2X5-1872-P","Modular Jack Shielded","Connectors",31.66,992
+"TDK","EC-RAD-7271-Q","Electrolytic 25V","Capacitors",2.58,4367
+"Vishay","CRCW-0603-9592-R","Thick Film Resistor 1%","Resistors",1.23,3395
+"Microchip","ATMEGA-2877-S","Dual Operational Amplifier","Integrated Circuits",157.62,3268
+"Wurth Elektronik","RJ45-8P8C-5087-T","Modular Jack Shielded","Connectors",31.00,3594
+"Murata","MLCC-0402-3012-U","Ceramic Capacitor 50V","Capacitors",2.94,2430
+"Bourns","CRCW-0603-7099-V","Metal Film Axial","Resistors",1.32,2064
+"STMicroelectronics","LM358-7976-W","8-bit PIC MCU","Integrated Circuits",209.77,2498
+"JST","USBC-REC-5219-X","USB Type-C Receptacle","Connectors",35.19,4958
+"Vishay","TA-1206-6313-Y","Electrolytic 25V","Capacitors",2.92,4483
+"Vishay","MFR-TH-6339-Z","Thin Film SMD Resistor","Resistors",1.37,2548
+"Microchip","LM358-3468-A","32-bit MCU 64KB Flash","Integrated Circuits",162.86,4170
+"TE Connectivity","TERM-3P-7066-B","Terminal Block 3-Pos","Connectors",38.46,1927
+"TDK","EC-RAD-2158-C","SMD MLCC 10%","Capacitors",2.45,4556
+"Yageo","RC-1206-7400-D","Thick Film Resistor 1%","Resistors",1.27,4386
+"Microchip","SN74HC-5390-E","8-bit AVR Microcontroller","Integrated Circuits",166.98,1905
+"Molex","RJ45-8P8C-1097-F","Modular Jack Shielded","Connectors",34.64,2734
+"Murata","TA-1206-8072-G","Electrolytic 25V","Capacitors",2.12,3614
+"Yageo","RC-1206-1574-H","Thin Film SMD Resistor","Resistors",1.22,1394
+"Microchip","STM32F7381-I","32-bit MCU 64KB Flash","Integrated Circuits",189.12,3629
+"TE Connectivity","USBC-REC-3159-J","USB Type-C Receptacle","Connectors",38.92,375
+"Samsung Electromechanics","TA-1206-6438-K","Electrolytic 25V","Capacitors",2.35,1118
+"ROHM","MFR-TH-2964-L","Metal Film Axial","Resistors",1.33,3302
+"NXP","LM358-3109-M","Dual Operational Amplifier","Integrated Circuits",148.56,3837
+"JST","HDR-2X5-5367-N","Terminal Block 3-Pos","Connectors",38.69,2359
+"KEMET","EC-RAD-9388-O","SMD MLCC 10%","Capacitors",2.54,3886
+"Vishay","MFR-TH-6491-P","Precision Resistor 0.1W","Resistors",1.13,1352
+"Analog Devices","LM358-8280-Q","8-bit AVR Microcontroller","Integrated Circuits",157.15,2098
+"Amphenol","HDR-2X5-6891-R","Pin Header 2.54mm Pitch","Connectors",28.62,3323
+"KEMET","EC-RAD-4952-S","Electrolytic 25V","Capacitors",2.77,1374
+"Bourns","MFR-TH-9457-T","Metal Film Axial","Resistors",1.37,1057
+"Microchip","PIC16F-2080-U","32-bit MCU 64KB Flash","Integrated Circuits",195.63,1907
+"Amphenol","HDR-2X5-4448-V","Modular Jack Shielded","Connectors",41.11,3360
+"TDK","TA-1206-6590-W","Tantalum Capacitor 16V","Capacitors",2.45,1738
+"Yageo","MFR-TH-2933-X","Thin Film SMD Resistor","Resistors",1.11,1215
+"Texas Instruments","SN74HC-1181-Y","Dual Operational Amplifier","Integrated Circuits",156.44,171
+"Molex","TERM-3P-6431-Z","Terminal Block 3-Pos","Connectors",36.80,2262
+"Vishay","TA-1206-1426-A","SMD MLCC 10%","Capacitors",2.40,2673
+"Panasonic","CRCW-0603-8854-B","Thick Film Resistor 1%","Resistors",1.26,3749
+"Texas Instruments","STM32F9338-C","NAND Gate Quad 2-Input","Integrated Circuits",158.41,1481
+"Wurth Elektronik","HDR-2X5-2381-D","Modular Jack Shielded","Connectors",33.40,4577
+"Vishay","EC-RAD-7925-E","SMD MLCC 10%","Capacitors",2.39,4451
+"Yageo","RC-1206-2458-F","Thick Film Resistor 1%","Resistors",1.27,4958
+"Texas Instruments","PIC16F-9880-G","NAND Gate Quad 2-Input","Integrated Circuits",189.93,4265
+"Molex","RJ45-8P8C-1209-H","USB Type-C Receptacle","Connectors",40.46,1550
+"KEMET","CC-0805-6360-I","Electrolytic 25V","Capacitors",2.30,2081
+"Panasonic","MFR-TH-6181-J","Precision Resistor 0.1W","Resistors",1.36,2197
+"NXP","LM358-7394-K","8-bit AVR Microcontroller","Integrated Circuits",148.70,750
+"JST","RJ45-8P8C-5714-L","USB Type-C Receptacle","Connectors",40.46,3939
+"KEMET","CC-0805-8617-M","Ceramic Capacitor 50V","Capacitors",2.03,4924
+"Vishay","MFR-TH-9604-N","Thin Film SMD Resistor","Resistors",1.01,454
+"Analog Devices","LM358-9549-O","8-bit AVR Microcontroller","Integrated Circuits",162.11,255
+"Amphenol","TERM-3P-1170-P","Pin Header 2.54mm Pitch","Connectors",39.00,1570
+"TDK","CC-0805-9849-Q","Ceramic Capacitor 50V","Capacitors",2.72,2436
+"Yageo","CRCW-0603-5018-R","Precision Resistor 0.1W","Resistors",1.33,3971
+"Microchip","PIC16F-9681-S","8-bit PIC MCU","Integrated Circuits",199.06,3681
+"JST","USBC-REC-3960-T","USB Type-C Receptacle","Connectors",29.01,411
+"Murata","TA-1206-7657-U","Electrolytic 25V","Capacitors",2.86,1185
+"ROHM","RC-1206-6983-V","Thick Film Resistor 1%","Resistors",1.31,2297
+"Analog Devices","ATMEGA-7368-W","Dual Operational Amplifier","Integrated Circuits",186.92,3245
+"Wurth Elektronik","USBC-REC-8429-X","Terminal Block 3-Pos","Connectors",28.39,4193
+"Vishay","MLCC-0402-6317-Y","SMD MLCC 10%","Capacitors",2.13,3393
+"ROHM","CRCW-0603-4547-Z","Thin Film SMD Resistor","Resistors",1.09,3088
+"NXP","ATMEGA-9085-A","32-bit MCU 64KB Flash","Integrated Circuits",210.89,4852
+"Wurth Elektronik","RJ45-8P8C-3754-B","USB Type-C Receptacle","Connectors",40.53,2731
+"TDK","MLCC-0402-6036-C","SMD MLCC 10%","Capacitors",2.04,3634
+"Panasonic","MFR-TH-9534-D","Thick Film Resistor 1%","Resistors",1.27,1406
+"Analog Devices","PIC16F-2320-E","8-bit PIC MCU","Integrated Circuits",215.33,1339
+"Wurth Elektronik","TERM-3P-1303-F","Modular Jack Shielded","Connectors",33.24,3984
+"Murata","MLCC-0402-6456-G","SMD MLCC 10%","Capacitors",2.75,3188
+"Bourns","RC-1206-6292-H","Thin Film SMD Resistor","Resistors",1.03,1498
+"STMicroelectronics","ATMEGA-7700-I","Dual Operational Amplifier","Integrated Circuits",179.03,2438
+"Wurth Elektronik","TERM-3P-2530-J","Modular Jack Shielded","Connectors",30.97,4312
+"Samsung Electromechanics","TA-1206-8949-K","Electrolytic 25V","Capacitors",2.98,1870
+"Bourns","RC-1206-3834-L","Thin Film SMD Resistor","Resistors",1.18,1032
+"NXP","PIC16F-3540-M","NAND Gate Quad 2-Input","Integrated Circuits",193.53,4836
+"Wurth Elektronik","USBC-REC-8149-N","Modular Jack Shielded","Connectors",39.30,1137
+"Samsung Electromechanics","CC-0805-2326-O","Ceramic Capacitor 50V","Capacitors",2.52,1770
+"ROHM","RC-1206-7062-P","Metal Film Axial","Resistors",1.21,1169
+"STMicroelectronics","SN74HC-8830-Q","NAND Gate Quad 2-Input","Integrated Circuits",178.71,1676
+"TE Connectivity","RJ45-8P8C-9753-R","Modular Jack Shielded","Connectors",31.21,2425
+"Samsung Electromechanics","EC-RAD-1802-S","Tantalum Capacitor 16V","Capacitors",2.33,4445
+"Bourns","RC-1206-3065-T","Precision Resistor 0.1W","Resistors",1.18,159
+"Microchip","LM358-7307-U","NAND Gate Quad 2-Input","Integrated Circuits",172.00,1202
+"TE Connectivity","USBC-REC-1894-V","Modular Jack Shielded","Connectors",35.68,886
+"Samsung Electromechanics","CC-0805-8336-W","Ceramic Capacitor 50V","Capacitors",2.56,1623
+"Vishay","ERJ-0805-3762-X","Thick Film Resistor 1%","Resistors",1.25,4959
+"NXP","SN74HC-7464-Y","8-bit PIC MCU","Integrated Circuits",183.29,240
+"TE Connectivity","HDR-2X5-4680-Z","Terminal Block 3-Pos","Connectors",29.11,2720
+"Murata","CC-0805-4130-A","SMD MLCC 10%","Capacitors",2.94,980
+"Panasonic","ERJ-0805-1096-B","Metal Film Axial","Resistors",0.99,1453
+"Analog Devices","PIC16F-8994-C","8-bit AVR Microcontroller","Integrated Circuits",221.36,2989
+"TE Connectivity","USBC-REC-4235-D","Pin Header 2.54mm Pitch","Connectors",38.21,1611
+"TDK","EC-RAD-4038-E","Electrolytic 25V","Capacitors",2.39,1982

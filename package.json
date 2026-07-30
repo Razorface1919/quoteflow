@@ -6,8 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "seed": "tsx --env-file=.env src/seed.ts"
+    "lint": "next lint",
+    "seed:api": "tsx --env-file=.env src/seed.ts",
+    "seed:offline": "tsx --env-file=.env src/seed.ts --offline",
+    "seed:refresh": "tsx --env-file=.env src/seed.ts --refresh",
+    "test:quote": "tsx --env-file=.env src/testQuote.ts",
+    "test:rbac": "tsx --env-file=.env src/testRbac.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
@@ -33,6 +37,7 @@
     "prisma": "^7.9.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   }
 }
