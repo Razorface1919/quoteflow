@@ -14,7 +14,7 @@ enum Role {
   ADMIN
 }
 
-// Unified 11-state lifecycle governing both internal approvals and external sales pipeline.
+// Unified 12-state lifecycle governing both internal approvals and external sales pipeline.
 enum QuoteStatus {
   DRAFT
   PENDING_APPROVAL
@@ -22,6 +22,7 @@ enum QuoteStatus {
   REJECTED
   SENT
   UNDER_NEGOTIATION
+  CUSTOMER_REVIEW
   ACCEPTED
   ORDER_PLACED
   CLOSED_WON

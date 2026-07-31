@@ -6,11 +6,14 @@ import { calculateQuotePricing } from "@/lib/pricing";
 import { generateQuoteNumber } from "@/lib/quoteNumber";
 import { QuoteStatus } from "@prisma/client";
 import { canCreateQuote, canReviseQuote, requiresManagerApproval } from "@/lib/rbac";
+import { auth } from "@/auth";
 
 export interface CreateQuoteItemInput {
   partId: string; // Used to fetch initial snapshot from DB
   quantity: number;
   marginPercent: number;
+  discountPercent?: number; // Added for 10% threshold check
+  overrideReason?: string;  // Mandatory if discountPercent > 10
 }
 
 export interface CreateQuoteInput {
@@ -22,6 +25,56 @@ export interface CreateQuoteInput {
   validUntil: string | Date;
   items: CreateQuoteItemInput[];
 }
+
+// ==========================================
+// AUTO-EXPIRY (CHECK-ON-READ / LAZY EXPIRY)
+// ==========================================
+
+export async function expirePastDueQuotes() {
+  const now = new Date();
+  await db.quote.updateMany({
+    where: {
+      status: {
+        in: [
+          QuoteStatus.DRAFT,
+          QuoteStatus.PENDING_APPROVAL,
+          QuoteStatus.APPROVED,
+          QuoteStatus.SENT,
+          QuoteStatus.UNDER_NEGOTIATION,
+          QuoteStatus.CUSTOMER_REVIEW,
+        ],
+      },
+      validUntil: {
+        lt: now, // Expiration date is in the past
+      },
+    },
+    data: {
+      status: QuoteStatus.EXPIRED,
+    },
+  });
+}
+
+export async function getQuotes() {
+  const session = await auth();
+  if (!session?.user) {
+    throw new Error("401 Unauthorized");
+  }
+
+  // Check-on-Read: Silently mark past-due quotes as EXPIRED before returning list
+  await expirePastDueQuotes();
+
+  return await db.quote.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      customer: true,
+      lineItems: true,
+    },
+  });
+}
+
+// ==========================================
+// QUOTE CREATION & REVISIONS
+// ==========================================
 
 export async function createQuote(input: CreateQuoteInput) {
   if (!input.items || input.items.length === 0) {
@@ -40,7 +93,17 @@ export async function createQuote(input: CreateQuoteInput) {
     ? QuoteStatus.PENDING_APPROVAL
     : QuoteStatus.DRAFT;
 
-  // 3. Fetch current part details from the database to FREEZE prices
+  // 3. Day 2 Guardrail: 10% Price-Override Threshold + Mandatory Reason
+  for (const item of input.items) {
+    const itemDiscount = item.discountPercent || 0;
+    if (itemDiscount > 10 && (!item.overrideReason || item.overrideReason.trim() === "")) {
+      throw new Error(
+        `400 Bad Request: Line-item discounts exceeding 10% require a mandatory overrideReason (Part ID: ${item.partId}).`
+      );
+    }
+  }
+
+  // 4. Fetch current part details from the database to FREEZE prices
   const partIds = input.items.map((i) => i.partId);
   const dbParts = await db.part.findMany({
     where: { id: { in: partIds } },
@@ -48,7 +111,7 @@ export async function createQuote(input: CreateQuoteInput) {
 
   const partMap = new Map(dbParts.map((p) => [p.id, p]));
 
-  // 4. Build frozen line item snapshots
+  // 5. Build frozen line item snapshots
   const lineItemsData = input.items.map((item) => {
     const part = partMap.get(item.partId);
     if (!part) {
@@ -58,6 +121,7 @@ export async function createQuote(input: CreateQuoteInput) {
     const quantity = Math.max(1, item.quantity);
     const unitCost = Math.max(0, part.unitPrice); // Base cost from catalog
     const marginPercent = Math.max(0, item.marginPercent);
+    const itemDiscount = Math.max(0, item.discountPercent || 0);
 
     // Calculate Selling Price from Cost + Margin
     let unitPrice = unitCost;
@@ -67,22 +131,25 @@ export async function createQuote(input: CreateQuoteInput) {
       unitPrice = unitCost * (1 + marginPercent / 100);
     }
 
-    const totalPrice = Math.max(0, quantity * unitPrice);
+    const discountAmount = Number(((unitPrice * itemDiscount) / 100).toFixed(4));
+    const finalUnitPrice = Math.max(0, unitPrice - discountAmount);
+    const totalPrice = Math.max(0, quantity * finalUnitPrice);
 
     return {
       partNumber: part.manufacturerPartNum,
       description: part.description,
       quantity: quantity,
       listPrice: Number(unitCost.toFixed(4)),
-      unitPrice: Number(unitPrice.toFixed(4)),
-      discountPercent: 0,
-      discountAmount: 0,
+      unitPrice: Number(finalUnitPrice.toFixed(4)),
+      discountPercent: itemDiscount,
+      discountAmount: discountAmount,
       totalPrice: Number(totalPrice.toFixed(4)),
       leadTimeDays: 14, // Default lead time
+      overrideReason: item.overrideReason || null,
     };
   });
 
-  // 5. Compute Quote-Level Totals (Stored, not computed on read)
+  // 6. Compute Quote-Level Totals (Stored, not computed on read)
   const totals = calculateQuotePricing({
     lineItems: lineItemsData.map((li) => ({
       partNumber: li.partNumber,
@@ -95,10 +162,10 @@ export async function createQuote(input: CreateQuoteInput) {
     taxRate: input.taxRate || 18, // Default 18% GST
   });
 
-  // 6. Generate Unique Human-Readable Quote Number
+  // 7. Generate Unique Human-Readable Quote Number
   const quoteNumber = await generateQuoteNumber();
 
-  // 7. Execute DB Transaction
+  // 8. Execute DB Transaction
   const createdQuote = await db.quote.create({
     data: {
       quoteNumber: quoteNumber,
@@ -157,10 +224,14 @@ export async function reviseQuote(input: ReviseQuoteInput) {
   }
 
   // 2. ENFORCE SERVER-SIDE RBAC GUARDRAILS
-  if (!canReviseQuote(user, {
-    ...originalQuote,
-    discountPercent: originalQuote.discountPercent ? Number(originalQuote.discountPercent) : undefined,
-  })) {
+  if (
+    !canReviseQuote(user, {
+      ...originalQuote,
+      discountPercent: originalQuote.discountPercent
+        ? Number(originalQuote.discountPercent)
+        : undefined,
+    })
+  ) {
     throw new Error(
       `403 Forbidden: (${user.role}) user cannot revise Quote ${originalQuote.quoteNumber}. Either ownership mismatch or status is immutable.`
     );
@@ -170,6 +241,19 @@ export async function reviseQuote(input: ReviseQuoteInput) {
   let lineItemsData;
 
   if (input.items && input.items.length > 0) {
+    // 3.5 Day 2 Guardrail: 10% Price-Override Threshold + Mandatory Reason for revisions
+    for (const item of input.items) {
+      const itemDiscount = item.discountPercent || 0;
+      if (
+        itemDiscount > 10 &&
+        (!item.overrideReason || item.overrideReason.trim() === "")
+      ) {
+        throw new Error(
+          `400 Bad Request: Line-item discounts exceeding 10% require a mandatory overrideReason (Part ID: ${item.partId}).`
+        );
+      }
+    }
+
     const partIds = input.items.map((i) => i.partId);
     const dbParts = await db.part.findMany({
       where: { id: { in: partIds } },
@@ -185,6 +269,7 @@ export async function reviseQuote(input: ReviseQuoteInput) {
       const quantity = Math.max(1, item.quantity);
       const unitCost = Math.max(0, part.unitPrice);
       const marginPercent = Math.max(0, item.marginPercent);
+      const itemDiscount = Math.max(0, item.discountPercent || 0);
 
       let unitPrice = unitCost;
       if (marginPercent > 0 && marginPercent < 100) {
@@ -193,18 +278,21 @@ export async function reviseQuote(input: ReviseQuoteInput) {
         unitPrice = unitCost * (1 + marginPercent / 100);
       }
 
-      const totalPrice = Math.max(0, quantity * unitPrice);
+      const discountAmount = Number(((unitPrice * itemDiscount) / 100).toFixed(4));
+      const finalUnitPrice = Math.max(0, unitPrice - discountAmount);
+      const totalPrice = Math.max(0, quantity * finalUnitPrice);
 
       return {
         partNumber: part.manufacturerPartNum,
         description: part.description,
         quantity: quantity,
         listPrice: Number(unitCost.toFixed(4)),
-        unitPrice: Number(unitPrice.toFixed(4)),
-        discountPercent: 0,
-        discountAmount: 0,
+        unitPrice: Number(finalUnitPrice.toFixed(4)),
+        discountPercent: itemDiscount,
+        discountAmount: discountAmount,
         totalPrice: Number(totalPrice.toFixed(4)),
         leadTimeDays: 14,
+        overrideReason: item.overrideReason || null,
       };
     });
   } else {
@@ -219,6 +307,7 @@ export async function reviseQuote(input: ReviseQuoteInput) {
       discountAmount: item.discountAmount,
       totalPrice: item.totalPrice,
       leadTimeDays: item.leadTimeDays,
+      overrideReason: (item as any).overrideReason || null,
     }));
   }
 
@@ -292,4 +381,101 @@ export async function reviseQuote(input: ReviseQuoteInput) {
     previousQuote: archivedQuote,
     newQuote: revisedQuote,
   };
+}
+
+// ==========================================
+// STATE TRANSITION ENGINE & RBAC ACTION
+// ==========================================
+
+const VALID_TRANSITIONS: Record<QuoteStatus, QuoteStatus[]> = {
+  DRAFT: [QuoteStatus.PENDING_APPROVAL, QuoteStatus.SENT],
+  PENDING_APPROVAL: [QuoteStatus.APPROVED, QuoteStatus.REJECTED],
+  APPROVED: [QuoteStatus.SENT],
+  REJECTED: [QuoteStatus.DRAFT],
+  SENT: [
+    QuoteStatus.UNDER_NEGOTIATION,
+    QuoteStatus.CLOSED_WON,
+    QuoteStatus.CLOSED_LOST,
+    QuoteStatus.EXPIRED,
+  ],
+  UNDER_NEGOTIATION: [
+    QuoteStatus.ACCEPTED,
+    QuoteStatus.ORDER_PLACED,
+    QuoteStatus.CLOSED_LOST,
+    QuoteStatus.EXPIRED,
+  ],
+  ACCEPTED: [QuoteStatus.ORDER_PLACED, QuoteStatus.CLOSED_WON, QuoteStatus.CLOSED_LOST],
+  ORDER_PLACED: [QuoteStatus.CLOSED_WON],
+  CLOSED_WON: [],
+  CLOSED_LOST: [QuoteStatus.DRAFT],
+  EXPIRED: [QuoteStatus.DRAFT],
+  ARCHIVED: [],
+  CUSTOMER_REVIEW: [QuoteStatus.ACCEPTED, QuoteStatus.REJECTED, QuoteStatus.EXPIRED],
+};
+
+function canUserTransition(
+  currentStatus: QuoteStatus,
+  targetStatus: QuoteStatus,
+  userRole: string
+): boolean {
+  const allowedNextStates = VALID_TRANSITIONS[currentStatus] || [];
+  if (!allowedNextStates.includes(targetStatus)) return false;
+
+  // RBAC Enforcement: Only ADMIN or MANAGER can Approve/Reject discounts
+  if (
+    currentStatus === QuoteStatus.PENDING_APPROVAL &&
+    (targetStatus === QuoteStatus.APPROVED || targetStatus === QuoteStatus.REJECTED)
+  ) {
+    return userRole === "ADMIN" || userRole === "MANAGER";
+  }
+
+  return ["ADMIN", "MANAGER", "SALES_REP"].includes(userRole);
+}
+
+export async function updateQuoteStatus(quoteId: string, targetStatus: QuoteStatus) {
+  const session = await auth();
+  if (!session?.user) {
+    return { error: "Unauthorized" };
+  }
+
+  const userRole = (session.user as any).role || "SALES_REP";
+
+  // 1. Fetch current quote
+  const quote = await db.quote.findUnique({
+    where: { id: quoteId },
+    select: { status: true },
+  });
+
+  if (!quote) {
+    return { error: "Quote not found" };
+  }
+
+  const currentStatus = quote.status as QuoteStatus;
+
+  // 2. Validate against State Machine & RBAC
+  if (!canUserTransition(currentStatus, targetStatus, userRole)) {
+    return {
+      error: `Permission denied: Cannot transition from ${currentStatus} to ${targetStatus} as ${userRole}`,
+    };
+  }
+
+  // 3. Perform database update
+  try {
+    await db.quote.update({
+      where: { id: quoteId },
+      data: { status: targetStatus },
+    });
+
+    try {
+      revalidatePath(`/quotes`);
+      revalidatePath(`/quotes/${quoteId}`);
+    } catch {
+      // Ignore in standalone tests
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update status:", error);
+    return { error: "Database update failed" };
+  }
 }

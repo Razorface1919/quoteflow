@@ -52,7 +52,8 @@ if (!fs.existsSync(CACHE_DIR)) {
 // Audit Counters for summary table
 const stats = {
   fetched: 0,
-  inserted: 0,
+  insertedLive: 0,
+  insertedCsv: 0,
   updated: 0,
   skippedDuplicate: 0,
   failed: 0,
@@ -63,57 +64,30 @@ const stats = {
 // ==========================================
 async function seedUsers() {
   console.log("👤 Seeding users...");
-
   const defaultPassword = await bcrypt.hash("Password123!", 12);
 
   const users = [
-    {
-      email: "admin@quoteflow.io",
-      name: "Admin User",
-      password: defaultPassword,
-      role: Role.ADMIN,
-    },
-    {
-      email: "manager@quoteflow.io",
-      name: "Manager User",
-      password: defaultPassword,
-      role: Role.MANAGER,
-    },
-    {
-      email: "sales@quoteflow.io",
-      name: "Sales User",
-      password: defaultPassword,
-      role: Role.SALES,
-    },
+    { email: "admin@quoteflow.io", name: "Admin User", password: defaultPassword, role: Role.ADMIN },
+    { email: "manager@quoteflow.io", name: "Manager User", password: defaultPassword, role: Role.MANAGER },
+    { email: "sales@quoteflow.io", name: "Sales User", password: defaultPassword, role: Role.SALES },
   ];
 
   for (const u of users) {
     const createdUser = await db.user.upsert({
       where: { email: u.email },
-      update: {
-        name: u.name,
-        role: u.role,
-        password: u.password,
-      },
-      create: {
-        email: u.email,
-        name: u.name,
-        role: u.role,
-        password: u.password,
-      },
+      update: { name: u.name, role: u.role, password: u.password },
+      create: { email: u.email, name: u.name, role: u.role, password: u.password },
     });
     console.log(`  ✅ Upserted user: ${createdUser.email} (${createdUser.role})`);
   }
-
   console.log("👤 User seeding complete!\n");
 }
 
 // ==========================================
-// 3. CUSTOMER SEEDING (RUBRIC BONUS: USD CUSTOMER)
+// 3. CUSTOMER SEEDING (INR + USD EDGE CASE)
 // ==========================================
 async function seedCustomers() {
   console.log("🏢 Seeding customers...");
-
   const defaultCustomers = [
     {
       companyName: "Bharat Aerospace & Defence Ltd",
@@ -128,7 +102,7 @@ async function seedCustomers() {
     {
       companyName: "Lockheed Defence Systems (APAC)",
       gstin: "99FOREIGNTAXID01",
-      preferredCurrency: "USD", // <-- NON-INR PREFERRED CURRENCY FOR RUBRIC EDGE CASE!
+      preferredCurrency: "USD",
       paymentTerms: "NET60",
       contacts: [
         { name: "John Miller", email: "j.miller@lockheedapac.com", phone: "+1 408 555 0199", isPrimary: true },
@@ -175,9 +149,7 @@ async function seedCustomers() {
           gstin: c.gstin,
           preferredCurrency: c.preferredCurrency,
           paymentTerms: c.paymentTerms,
-          contacts: {
-            create: c.contacts,
-          },
+          contacts: { create: c.contacts },
         },
       });
       console.log(`  ✅ Inserted customer: ${c.companyName} (${c.preferredCurrency})`);
@@ -185,7 +157,6 @@ async function seedCustomers() {
       console.log(`  [SKIPPED] Customer already exists: ${c.companyName}`);
     }
   }
-
   console.log("🏢 Customer seeding complete!\n");
 }
 
@@ -202,7 +173,7 @@ async function fetchWithRetry(url: string, body: any, retries = 3, delayMs = 200
       });
 
       if (response.status === 429) {
-        console.warn(`[RATE LIMIT] Hit 429 Too Many Requests. Backing off for ${delayMs * 2}ms...`);
+        console.warn(`[RATE LIMIT 429] Too Many Requests. Exponential backoff for ${delayMs * 2}ms...`);
         await new Promise((res) => setTimeout(res, delayMs * 2));
         continue;
       }
@@ -241,7 +212,7 @@ async function getMouserParts(searchTerm: string, category: string, page = 1): P
 
   // 3. API Fetch
   if (!MOUSER_API_KEY) {
-    console.warn("[WARN] MOUSER_API_KEY is not set. Using deterministic catalog fallback generator.");
+    console.warn("[WARN] MOUSER_API_KEY is not set. Cannot fetch live Mouser parts.");
     return [];
   }
 
@@ -260,8 +231,10 @@ async function getMouserParts(searchTerm: string, category: string, page = 1): P
     const data = await fetchWithRetry(url, payload);
     const parts = data?.SearchResults?.Parts || [];
 
-    fs.writeFileSync(cacheFile, JSON.stringify(parts, null, 2), "utf-8");
-    console.log(`[CACHED] Saved ${parts.length} parts to ${path.basename(cacheFile)}`);
+    if (parts.length > 0) {
+      fs.writeFileSync(cacheFile, JSON.stringify(parts, null, 2), "utf-8");
+      console.log(`[CACHED] Saved ${parts.length} parts to ${path.basename(cacheFile)}`);
+    }
     stats.fetched += parts.length;
     return parts;
   } catch (error: any) {
@@ -271,49 +244,7 @@ async function getMouserParts(searchTerm: string, category: string, page = 1): P
 }
 
 // ==========================================
-// 5. DETERMINISTIC FALLBACK CATALOG GENERATOR
-// ==========================================
-const MANUFACTURERS = [
-  "Texas Instruments",
-  "Analog Devices",
-  "Microchip Technology",
-  "STMicroelectronics",
-  "Murata",
-  "Yageo",
-  "TE Connectivity",
-  "Molex",
-  "Infineon",
-  "ON Semiconductor",
-];
-
-function generateCatalogParts(category: string, count: number, offset: number) {
-  const parts = [];
-  for (let i = 1; i <= count; i++) {
-    const idx = offset + i;
-    const mfg = MANUFACTURERS[(idx - 1) % MANUFACTURERS.length];
-    const partNum = `PART-${category.substring(0, 3).toUpperCase()}-${1000 + idx}`;
-    
-    let price = 1.5;
-    if (category === "Integrated Circuits") price = Number((4.5 + (idx % 25) * 1.25).toFixed(2));
-    else if (category === "Connectors") price = Number((0.75 + (idx % 10) * 0.45).toFixed(2));
-    else price = Number((0.05 + (idx % 20) * 0.15).toFixed(2)); // Passives / Resistors / Capacitors
-
-    parts.push({
-      manufacturer: mfg,
-      manufacturerPartNum: partNum,
-      description: `Industrial-grade ${category} component by ${mfg} (Series ${100 + (idx % 50)})`,
-      category: category,
-      unitPrice: price,
-      stockQuantity: 250 + (idx % 100) * 15,
-      dataSheetUrl: `https://datasheet.quoteflow.io/pdf/${partNum}.pdf`,
-      mouserPartNumber: `595-${partNum}`,
-    });
-  }
-  return parts;
-}
-
-// ==========================================
-// 6. DATA NORMALIZER (Aligned with your schema!)
+// 5. DATA NORMALIZER
 // ==========================================
 function normalizeMouserPart(raw: any, category: string) {
   let price = 10.0;
@@ -330,17 +261,17 @@ function normalizeMouserPart(raw: any, category: string) {
     manufacturerPartNum: raw.ManufacturerPartNumber || `UNK-${Date.now()}`,
     description: (raw.Description || "No description available").slice(0, 255),
     category: category,
-    unitPrice: price,                  // Fixed: unitPrice instead of list_price
-    stockQuantity: isNaN(stock) ? 50 : stock, // Fixed: stockQuantity instead of current_stock
-    dataSheetUrl: raw.DataSheetUrl || null,   // Fixed: dataSheetUrl instead of datasheet_url
+    unitPrice: price,
+    stockQuantity: isNaN(stock) ? 50 : stock,
+    dataSheetUrl: raw.DataSheetUrl || null,
     mouserPartNumber: raw.MouserPartNumber || null,
   };
 }
 
 // ==========================================
-// 7. DATABASE UPSERT (IDEMPOTENT)
+// 6. DATABASE UPSERT (IDEMPOTENT)
 // ==========================================
-async function upsertPartToDb(partData: ReturnType<typeof normalizeMouserPart>) {
+async function upsertPartToDb(partData: ReturnType<typeof normalizeMouserPart>, source: "LIVE" | "CSV") {
   try {
     const existing = await db.part.findUnique({
       where: {
@@ -355,17 +286,18 @@ async function upsertPartToDb(partData: ReturnType<typeof normalizeMouserPart>) 
       await db.part.update({
         where: { id: existing.id },
         data: {
-          unitPrice: partData.unitPrice,          // Fixed schema field
-          stockQuantity: partData.stockQuantity,  // Fixed schema field
+          unitPrice: partData.unitPrice,
+          stockQuantity: partData.stockQuantity,
           updatedAt: new Date(),
         },
       });
       stats.skippedDuplicate++;
-      console.log(`[SKIPPED-DUPLICATE/UPDATED] ${partData.manufacturer} - ${partData.manufacturerPartNum}`);
+      console.log(`[SKIPPED/UPDATED] ${partData.manufacturer} - ${partData.manufacturerPartNum}`);
     } else {
       await db.part.create({ data: partData });
-      stats.inserted++;
-      console.log(`[INSERTED] ${partData.manufacturer} - ${partData.manufacturerPartNum}`);
+      if (source === "LIVE") stats.insertedLive++;
+      else stats.insertedCsv++;
+      console.log(`[INSERTED-${source}] ${partData.manufacturer} - ${partData.manufacturerPartNum}`);
     }
   } catch (error: any) {
     stats.failed++;
@@ -374,7 +306,7 @@ async function upsertPartToDb(partData: ReturnType<typeof normalizeMouserPart>) 
 }
 
 // ==========================================
-// 8. CSV TOP-UP FALLBACK PARSER
+// 7. CSV TOP-UP FALLBACK PARSER
 // ==========================================
 async function runCsvFallback() {
   if (!fs.existsSync(FALLBACK_CSV_PATH)) {
@@ -402,16 +334,16 @@ async function runCsvFallback() {
       mouserPartNumber: null,
     };
 
-    await upsertPartToDb(partData);
+    await upsertPartToDb(partData, "CSV");
   }
 }
 
 // ==========================================
-// 9. MAIN ORCHESTRATOR
+// 8. MAIN ORCHESTRATOR
 // ==========================================
 async function main() {
   console.log("==========================================");
-  console.log("    QUOTEFLOW - PARTS SEEDING PIPELINE     ");
+  console.log("    QUOTEFLOW - PARTS SEEDING PIPELINE    ");
   console.log("==========================================");
   console.log(`Mode: ${IS_OFFLINE ? "OFFLINE (Cache-Only)" : IS_REFRESH ? "FORCE REFRESH" : "NORMAL (Cache-First)"}\n`);
 
@@ -421,9 +353,8 @@ async function main() {
   // 2. Seed Customers (INR + USD Multi-Currency Edge Cases)
   await seedCustomers();
 
-  // 3. Process Target Categories
-  console.log("🔧 Seeding parts catalog...");
-  let totalOffset = 0;
+  // 3. Process Target Categories via Live Mouser API / Cache
+  console.log("🔧 Seeding parts catalog from live Mouser API...");
 
   for (const target of SEED_TARGETS) {
     console.log(`\n---> Processing Category: ${target.category} (Target: ${target.targetCount})`);
@@ -437,30 +368,18 @@ async function main() {
 
         for (const raw of rawParts) {
           const normalized = normalizeMouserPart(raw, target.category);
-          await upsertPartToDb(normalized);
+          await upsertPartToDb(normalized, "LIVE");
           categoryCount++;
         }
         page++;
       }
       page = 1; // Reset page for next search term
     }
-
-    // If API/cache didn't hit the target, generate deterministic catalog components
-    if (categoryCount < target.targetCount) {
-      const missingCount = target.targetCount - categoryCount;
-      console.log(`   ↳ [FALLBACK] Generating ${missingCount} deterministic parts for "${target.category}"...`);
-      const generatedParts = generateCatalogParts(target.category, missingCount, totalOffset);
-      for (const part of generatedParts) {
-        await upsertPartToDb(part);
-        categoryCount++;
-      }
-    }
-    totalOffset += categoryCount;
   }
 
   // 4. Enforce 500-Part Minimum via CSV Top-up
   const totalDbParts = await db.part.count();
-  console.log(`\nCurrent Database Total: ${totalDbParts} parts.`);
+  console.log(`\nCurrent Database Total after Live API: ${totalDbParts} parts.`);
 
   if (totalDbParts < 500) {
     console.log(`[ALERT] Total below 500 threshold (${totalDbParts}/500). Running CSV Top-up...`);
@@ -475,12 +394,18 @@ async function main() {
   console.log("==========================================");
   console.table({
     "API Parts Fetched": stats.fetched,
-    "New Inserted Rows": stats.inserted,
+    "Live API Inserted": stats.insertedLive,
+    "CSV Top-up Inserted": stats.insertedCsv,
     "Duplicates Skipped/Updated": stats.skippedDuplicate,
     "Failed Upserts": stats.failed,
     "FINAL DB TOTAL PARTS": finalCount,
   });
   console.log("==========================================\n");
+
+  console.log(`📄 NOTE FOR README/DEBUG_JOURNAL:`);
+  console.log(`   - Live API Parts: ${stats.insertedLive}`);
+  console.log(`   - CSV Top-Up Parts: ${stats.insertedCsv}`);
+  console.log(`   - Total Parts: ${finalCount}`);
 }
 
 main()
