@@ -1,156 +1,131 @@
-# AI Collaboration & Usage Log — QuoteFlow
+# AI Collaboration & Usage Log - QuoteFlow
 
-> This document provides a transparent audit trail of how Artificial Intelligence (Gemini / LLM assistants and autonomous agents) was utilized during the engineering and development of QuoteFlow.
->
-> In accordance with professional engineering rubrics, AI was leveraged as an architectural sounding board, boilerplate generator, refactoring assistant, and automated debugging tool. All AI-generated suggestions were strictly evaluated against project requirements, tested for edge-case failures, and manually verified before being committed to the codebase.
+This document provides a transparent audit trail of how Artificial Intelligence (Gemini / LLM assistants and autonomous agents) was utilized during the engineering and development of QuoteFlow.
 
----
+In accordance with professional engineering rubrics, AI was leveraged as an architectural sounding board, boilerplate generator, refactoring assistant, and automated debugging tool. All AI-generated suggestions were strictly evaluated against project requirements, tested for edge-case failures, and manually verified before being committed to the codebase.
 
-## Day 1: Foundation, Architecture, & Integration
+## Part 1: Explicit AI Prompt Log (Kept / Changed / Rejected)
 
-### 1. Next.js 14 (App Router) & Auth.js Node Runtime Locking
+To demonstrate verification discipline, here are 5 specific instances of AI prompts used during development, alongside the critical evaluation of the AI's output.
 
-**Context / Challenge:** Next.js 14 App Router defaults certain route handlers to the Edge Runtime, which causes fatal runtime compatibility crashes when initializing database-backed authentication adapters (such as Auth.js with Prisma/Postgres) due to missing Node.js native modules (`crypto`, `net`, `fs`).
+### 1. The Pricing Model Correction (Rejected)
 
-**AI Assistance:** Consulted AI to identify the correct Next.js 14 App Router route-segment configuration pattern to force a strict Node.js runtime execution environment.
+**Prompt:** "Write a TypeScript function to calculate the profit margin percentage for a quote line item given the unit cost and the unit sell price."
 
-**Implementation:** Explicitly applied `export const runtime = 'nodejs';` across NextAuth API route handlers (`src/app/api/auth/[...nextauth]/route.ts`) and database utility modules.
+**AI Output:** Provided a standard markup formula: `((sellPrice - unitCost) / unitCost) * 100`.
 
-**Validation:** Verified by executing authentication flows locally and ensuring no Edge Runtime `Module not found` or Node-compatibility exceptions were thrown in the server console.
+**Action:** REJECTED.
 
----
+**Rationale:** The AI conflated markup with gross margin. In enterprise B2B distribution, margin is strictly calculated against the selling price, not the cost. Blindly accepting this would have fundamentally corrupted the application's financial logic. I discarded the AI's math and manually implemented the correct enterprise formula: `((sellPrice - unitCost) / sellPrice) * 100`, alongside strict zero-clamping (`Math.max(0, ...)`) to prevent negative margins.
 
-### 2. Prisma 7 Postgres Adapter (`@prisma/adapter-pg`) Integration
+### 2. Next.js 15 searchParams Bug (Kept)
 
-**Context / Challenge:** Configuring Prisma 7 with explicit driver adapters (`@prisma/adapter-pg`) and TypeScript path aliases (`@/*`) within an enforced `src/` directory boundary.
+**Prompt:** "My Next.js App Router page is getting 'undefined' when I try to read searchParams.query inside my server component. The URL clearly has ?query=capacitor. Why is Prisma receiving an empty string?"
 
-**AI Assistance:** Generated boilerplate for the singleton database client initialization pattern (`src/lib/db.ts`) using `pg.Pool` and `PrismaPg` to prevent connection-pool exhaustion during hot-module reloading in development.
+**AI Output:** Explained that Next.js 15 introduced a breaking change where `searchParams` is now an asynchronous Promise, not a synchronous object. Suggested adding `const params = await searchParams;`.
 
-**Implementation:** Integrated the generated adapter wrapper and mapped imports cleanly via `@/lib/db`.
+**Action:** KEPT.
 
-**Validation:** Executed database migrations and schema pushes without connection leaks or module-resolution drift.
+**Rationale:** The AI accurately identified a framework-specific breaking change. The suggested asynchronous resolution fixed the Prisma filtering bug immediately.
 
----
+### 3. Server-Side RBAC Guardrails (Changed)
 
-### 3. Mouser API Integration & Offline-First Disk-Caching Pipeline
+**Prompt:** "How do I prevent a Sales user from updating a Manager's quote in Next.js? Should I use middleware?"
 
-**Context / Challenge:** Relying purely on live third-party API calls (Mouser Electronics) during development introduces severe risks: API rate-limiting, network latency, and blocked development workflows when offline or lacking valid API credentials.
+**AI Output:** Suggested implementing a complex Edge Middleware (`middleware.ts`) to intercept the request and check the session role before it hits the Server Action.
 
-**AI Assistance:** Designed a "Cache-First" local filesystem strategy (`src/lib/mouser.ts`) that inspects a local `.cache/mouser/` directory for existing JSON responses before dispatching external HTTP requests.
+**Action:** CHANGED.
 
-**Implementation:**
+**Rationale:** While Edge Middleware works for broad page routing, it lacks access to the Prisma database client (due to Edge limitations) to check the ownership of the specific quote. I adapted the concept but moved the RBAC evaluation directly into the Server Action layer (`src/lib/rbac.ts`), ensuring authorization is checked atomically right before the database transaction opens.
 
-- Implemented file-system lookups (`fs.existsSync`, `fs.readFileSync`) wrapping the API fetch layer.
-- Added graceful fallbacks to return cached/mock arrays with explicit server-console warnings if `MOUSER_API_KEY` is unset.
-- Configured `.gitignore` to exclude `.cache/` from version control while keeping the caching pipeline intact for local environments.
+### 4. Prisma 7 Adapter Initialization (Kept)
 
-**Validation:** Tested end-to-end via Server Actions (`importPartFromMouser`), confirming that querying part `SN74HC00N` successfully read from local disk cache and populated the database in `<10ms` without triggering network calls.
+**Prompt:** "I'm upgrading to Prisma 7 and getting an error that PrismaClient requires a driver adapter. Provide the boilerplate to connect Prisma to a native pg.Pool in Next.js."
 
----
+**AI Output:** Generated the global singleton pattern using `pg.Pool`, `PrismaPg`, and `globalThis` to prevent connection exhaustion during development hot-reloads.
 
-### 4. Composite Natural Key Schema Design & Idempotent Upserts
+**Action:** KEPT.
 
-**Context / Challenge:** Preventing duplicate inventory records during manual UI imports or automated seeding scripts when components are sourced multiple times across different B2B electronic component distributors.
+**Rationale:** The AI provided the exact, syntactically correct boilerplate required by the new Prisma 7 architecture, saving significant time reading API migration docs.
 
-**AI Assistance:** Evaluated trade-offs between surrogate UUID keys and compound unique constraints with LLM consultation; structured Prisma `upsert()` mutation payloads within automated seeding (`src/seed.ts`) and Server Actions (`src/app/actions/parts.ts`).
+### 5. Composite Natural Keys (Changed)
 
-**Architectural Direction & Validation:**
+**Prompt:** "I am pulling electronic components from the Mouser API. How do I make sure I don't insert duplicate parts if I run the seed script twice? Give me the Prisma schema update."
 
-- Directed the schema design to use a composite natural key: `@@unique([manufacturer, manufacturerPartNum])` while retaining a UUID primary key for clean relational joins.
-- This guarantees vendor-agnostic deduplication (e.g., recognizing that a Texas Instruments `SN74HC00N` from Mouser is the exact same physical component as one sourced from Digi-Key or entered manually).
-- Tested by executing `npm run seed` consecutively and verifying via terminal output (`Successfully upserted`) and database inspection that zero duplicate rows or unique-constraint crashes occurred.
+**AI Output:** Suggested changing the `@id` of the Part model to be the `manufacturerPartNum`.
 
----
+**Action:** CHANGED.
 
-### 5. Docker Compose Port Resiliency & Volume Verification
+**Rationale:** Using the MPN as the primary key is dangerous because different manufacturers can technically use the same part number. I changed the AI's approach to use a Composite Unique Constraint (`@@unique([manufacturer, manufacturerPartNum])`) while keeping a UUID as the primary `@id` for cleaner foreign-key relations in downstream tables.
 
-**Context / Challenge:** Resolving host-port binding collisions on default PostgreSQL port `5432` without breaking data persistence or volume mapping across container restarts.
+## Part 2: Architectural Execution & Agentic Workflow
 
-**AI Assistance:** Consulted AI to verify clean port-mapping syntax (`5433:5432`) in `docker-compose.yml` and formalize a verification sequence to test Docker named volume persistence.
+### 1. Next.js (App Router) & Auth.js Node Runtime Locking
 
-**Implementation & Validation:** Executed a full container destruction and recreation cycle (`docker compose down && docker compose up -d`), followed immediately by `npm run seed`, physically proving that database records and schema state survived container teardown on host port `5433`.
+**Context:** Next.js App Router defaults certain route handlers to the Edge Runtime, causing fatal compatibility crashes when initializing Auth.js with Prisma/Postgres due to missing Node.js native modules.
 
----
+**Integration:** Consulted AI to identify the correct route-segment configuration. Explicitly exported `export const runtime = 'nodejs';` at the top of the NextAuth API route handler.
 
-### 6. Agentic Debugging & Maintenance via Devin
+**Validation:** Verified by executing full authentication flows locally without triggering crypto-compatibility exceptions.
 
-**Context / Challenge:** Accelerating routine debugging, stack-trace analysis, and minor environment configurations without diverting developer focus from high-level system architecture.
+### 2. Mouser API Integration & Offline-First Disk-Caching
 
-**AI Assistance:** Leveraged Devin (an autonomous AI software engineer agent) to investigate isolated syntax errors, trace minor configuration warnings, and validate environment script execution (`--env-file=.env` compatibility with `tsx`).
+**Context:** Relying purely on live third-party APIs during development introduces risks of rate-limiting, network latency, and blocked workflows.
 
-**Governance & Validation:** Treated Devin as an asynchronous junior engineering contributor. All agent-proposed diffs and refactors were manually reviewed, audited against project conventions, and tested in the local sandbox before being staged or committed to Git.
+**Integration:** Designed a "Cache-First" local filesystem strategy that inspects a local `.cache/mouser/` directory for pre-existing JSON responses before dispatching HTTP requests.
 
----
+**Validation:** Querying part SN74HC00N successfully read from the local disk cache and populated the database in under 10ms without triggering outbound network calls.
 
-## Day 2: Quote Engine Architecture, Atomic Versioning, & RBAC Guardrails
+### 3. Docker Compose Port Resiliency & Volume Persistence
 
-### 7. Immutable Quote Versioning via Compound Unique Constraints
-**Context / Challenge:** B2B quotations require strict traceability. Overwriting existing quote records destroys audit trails and invalidates client negotiations, while generating brand-new, unrelated IDs for every minor revision breaks customer document tracking.
+**Context:** The default PostgreSQL port (5432) was bound by a local service, causing Docker Compose to fail.
 
-**AI Assistance:** Consulted AI to model a clean schema design pattern in Prisma that supports user-friendly, consistent quote numbering while enforcing immutable versioning at the database engine level.
+**Integration:** Consulted AI to confirm the host-to-container mapping syntax (5433:5432).
 
-**Architectural Direction & Validation:**
-- Designed a compound unique index in `schema.prisma`: `@@unique([quoteNumber, version])`.
-- This ensures a quote number (e.g., `QF-2026-0005`) remains constant across its entire lifecycle, while every revision increments the `version` integer (`v1`, `v2`, `v3`).
-- Validated via database schema migrations (`prisma migrate dev`) and integration testing, confirming that attempting to insert a duplicate version number for the same quote throws a database-level unique constraint exception.
+**Validation:** Remapped the port, then executed `docker compose down && docker compose up -d` followed by `npm run seed`. Confirmed volume persistence across a full container lifecycle.
 
----
+### 4. Immutable Quote Versioning via Compound Constraints
 
-### 8. Atomic Revision Engine & Audit Trail Transactions (`$transaction`)
-**Context / Challenge:** When creating a revision of an existing quote, the system must simultaneously freeze the previous version's state, mark it as historical/archived, and create a brand-new draft revision containing copied or updated line items—without creating data orphan states or race conditions.
+**Context:** B2B quotations require strict traceability. Assigning entirely new IDs to revisions breaks document tracking.
 
-**AI Assistance:** Leveraged AI to draft the boilerplate for a multi-operation Prisma `$transaction` within the `reviseQuote` Server Action (`src/app/actions/quotes.ts`).
+**Integration:** Modeled a Prisma schema pattern enforcing immutable revision history via `@@unique([quoteNumber, version])`.
 
-**Implementation:**
-- Built an atomic two-step transaction using `db.$transaction([ ... ])`:
-  1. **Step A:** Updates the existing quote's status from `DRAFT` / `REJECTED` to an immutable `ARCHIVED` state.
-  2. **Step B:** Generates a new record with `version = originalQuote.version + 1`, copying over or refreshing frozen line-item pricing snapshots and recalculating quote-level totals.
-- Explicitly cast Decimal fields to standard TypeScript numbers (`Number(originalQuote.discountPercent)`) within inline object spreads to satisfy strict TypeScript compiler checks without resorting to `as any` type-safety overrides.
+**Validation:** The database engine strictly prevents duplicate version integers for the same quote, eliminating race-condition duplication.
 
-**Validation:**
-- Executed programmatic CLI test suites (`src/testQuote.ts`), confirming that revising `v1` atomically updates its status to `ARCHIVED` and generates `v2` with matching `quoteNumber` and incremented version numbering.
+### 5. Atomic Revision Engine via $transaction
 
----
+**Context:** Revising a quote requires two mutations: archiving the current version and inserting a successor. Without transactional wrapping, runtime exceptions create unrecoverable orphan states.
 
-### 9. Zero-Clamping Financial Calculation Pipeline
-**Context / Challenge:** Floating-point precision errors and invalid negative margin/discount inputs can silently corrupt enterprise ERP pricing models and generate malformed financial totals.
+**Integration:** Drafted a multi-operation `db.$transaction([...])` block inside the `reviseQuote` Server Action. If either step throws, the entire transaction rolls back automatically.
 
-**AI Assistance:** Refined mathematical algorithms and edge-case handling for unit selling prices, line-item margins, and tax aggregations in `src/lib/pricing.ts`.
+**Validation:** Executed CLI test suites, confirming that revising v1 atomically transitions it to ARCHIVED and generates v2.
 
-**Implementation:**
-- Enforced strict floor constraints using `Math.max(0, ...)` across quantities, catalog costs, margins, and discounts to prevent negative number injection.
-- Implemented robust markup/margin formulas (`unitPrice = unitCost / (1 - marginPercent / 100)`) with explicit decimal-place rounding (`.toFixed(4)` for unit prices, `.toFixed(2)` for totals/taxes) to guarantee currency accuracy.
+### 6. Prisma Decimal to TypeScript number Type-Casting
 
-**Validation:**
-- Tested against edge-case inputs (e.g., $0\%$ margins, $>100\%$ markups, high quantities), ensuring deterministic mathematical outputs across both standalone CLI execution and Next.js Server Actions.
+**Context:** Prisma maps PostgreSQL DECIMAL columns to Decimal.js objects, causing TypeScript errors (TS2345) when passed into RBAC utility functions expecting primitive number types.
 
----
+**Integration:** Applied targeted inline casting using `Number(originalQuote.discountPercent)` within the object spread passed to `canReviseQuote`.
 
-### 10. Server-Side RBAC Guardrails & High-Discount Auto-Routing
-**Context / Challenge:** Relying solely on client-side UI disabling to restrict unauthorized actions creates severe security vulnerabilities. Access control must be enforced at the backend mutation layer to prevent API tampering, privilege escalation, and unauthorized discounting.
+**Validation:** TypeScript compiler accepted the payload, and no precision loss occurred in downstream discount threshold comparisons.
 
-**AI Assistance:** Collaborated with AI to structure centralized permission policies (`src/lib/rbac.ts`) and integrate them cleanly into Server Actions without cluttering the business logic.
+### 7. App Router Form Hydration & URL State Synchronization
 
-**Implementation:**
-- Developed centralized helper functions (`canCreateQuote`, `canReviseQuote`, `requiresManagerApproval`) based on the three-role system (`SALES`, `MANAGER`, `ADMIN`).
-- Implemented **ownership-based revision logic**: `SALES` representatives are strictly restricted to revising only their own `DRAFT` or `REJECTED` quotes; attempts to modify quotes owned by peers or managers fail immediately.
-- Enforced **threshold-based automatic routing**: Any quote submitted with a discount exceeding `15.0%` is dynamically routed to `PENDING_APPROVAL` status instead of standard `DRAFT`, requiring managerial sign-off.
+**Context:** Native HTML `<form>` submissions triggered full-page reloads. Passing filter values as `defaultValue` props caused UI desynchronization after URL navigation.
 
-**Validation:**
-- Executed dedicated security audit scripts (`npm run test:rbac` via `src/testRbac.ts`).
-- Verified that a `SALES` user attempting to revise a `MANAGER` quote triggers a hard `403 Forbidden` Server Action error, and confirmed that $20\%$ discount submissions automatically switch to `PENDING_APPROVAL` status.
+**Integration:** Extracted the search interface into a Client Component (`SearchFilters.tsx`). Used `useSearchParams()` to initialize local React state directly from the live URL. Replaced form submission with `router.replace()`.
 
----
+**Validation:** Confirmed that navigating back and forward correctly restores the filter state from the URL rather than stale component memory.
 
-### 11. Agentic Workflow Management via Devin (Day 2 Contributions)
-**Context / Challenge:** Managing boilerplate updates across Server Actions, Prisma queries, and test-suite scaffolding while maintaining rapid development velocity against a strict assessment timeline.
+### 8. Bypassing Aggressive Server Component Caching (force-dynamic)
 
-**AI Assistance:** Utilized the autonomous Devin agent to implement the transactional refactoring of `src/app/actions/quotes.ts` and draft inline type-casting corrections for Prisma `Decimal`-to-TypeScript `Number` compatibility.
+**Context:** The category filter dropdown rendered empty despite the database containing seeded categories. Next.js statically generated the route during initial render against an empty database and cached the empty array.
 
-**Governance & Validation:**
-- Conducted full code reviews of Devin's diffs to ensure adherence to existing project patterns (such as silent `revalidatePath` error handling during standalone CLI testing).
-- Audited agent-generated logic via local CLI test runners (`npx tsx --env-file=.env src/testRbac.ts`) to independently prove that 403 authorization guardrails and threshold routing executed flawlessly in the Node.js runtime.
+**Integration:** Exported `export const dynamic = "force-dynamic";` at the top of `PartsCataloguePage`, forcing runtime execution.
+
+**Validation:** Seeded new components and confirmed a browser refresh immediately populated the dropdown without requiring manual cache invalidation.
 
 ## Summary of Architectural Ownership
 
-While LLM assistants and autonomous agents (Devin) accelerated boilerplate generation, routine debugging, and syntax lookup, all core architectural decisions — including directory boundaries (`src/`), composite natural-key design, disk-caching fallbacks, three-role RBAC governance scope, and reproducible database migration paths (`prisma migrate dev`) — were strictly directed, tested, and verified by the developer.
+AI tooling, including LLM assistants and the autonomous Devin agent, accelerated well-scoped tasks: generating adapter boilerplate, drafting transaction structures, resolving type-contract mismatches, and scaffolding test runners. The role of AI was consistently advisory and generative, not decisive.
+
+All core architectural decisions were directed, evaluated, and validated by the developer. This includes the composite natural key strategy, the disk-based offline caching pipeline, the financial correctness formulas, the RBAC security model, and the ACID-compliant atomic revision transactions. No AI-generated code was committed to the repository without manual review, local testing, and explicit developer approval.

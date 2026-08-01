@@ -5,7 +5,7 @@ import { QuoteStatus } from "@prisma/client";
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!session?.user) {
@@ -15,9 +15,10 @@ export async function PATCH(
   try {
     const body = await request.json();
     const { status } = body as { status: QuoteStatus };
+    const { id } = await params;
 
     const updatedQuote = await db.quote.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 

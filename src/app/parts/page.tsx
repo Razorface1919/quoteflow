@@ -1,146 +1,88 @@
-import { db } from "@/lib/db";
-import { deletePart } from "@/app/actions/parts";
-import MouserImportForm from "./MouserImportForm";
-import PartForm from "./PartForm";
+import { getParts, getUniqueCategories } from "@/app/actions/parts";
 import Link from "next/link";
+import SearchFilters from "./SearchFilters";
+import { auth } from "@/auth"; // <-- Import Auth.js configuration
 
-interface PartsPageProps {
-  searchParams: {
-    query?: string;
-    category?: string;
-  };
-}
+export const dynamic = "force-dynamic";
 
-export default async function PartsPage({ searchParams }: PartsPageProps) {
-  const query = searchParams?.query || "";
-  const category = searchParams?.category || "";
+export default async function PartsCataloguePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string; category?: string }>;
+}) {
+  const params = await searchParams;
+  
+  const query = params?.query || "";
+  const category = params?.category || "";
 
-  // Dynamic Prisma query filter
-  const parts = await db.part.findMany({
-    where: {
-      AND: [
-        query
-          ? {
-              OR: [
-                { mouserPartNumber: { contains: query, mode: "insensitive" } },
-                { manufacturerPartNum: { contains: query, mode: "insensitive" } },
-                { description: { contains: query, mode: "insensitive" } },
-              ],
-            }
-          : {},
-        category ? { category: { equals: category } } : {},
-      ],
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+  // 1. Fetch the active session to determine RBAC permissions
+  const session = await auth();
+  const userRole = session?.user?.role;
+  const canManageCatalogue = userRole === "ADMIN" || userRole === "MANAGER";
 
-  // Collect unique categories for the filter dropdown
-  const categories = await db.part.findMany({
-    select: { category: true },
-    distinct: ["category"],
-  });
+  // 2. Fetch both parts and categories at the same time
+  const [parts, categories] = await Promise.all([
+    getParts(query, category),
+    getUniqueCategories(),
+  ]);
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Parts Catalog</h1>
-        <span className="text-sm text-gray-500">Total Parts: {parts.length}</span>
-      </div>
-
-{/* Quick Mouser Import Bar */}
-      <MouserImportForm />
-      {/* Add / Upsert Form */}
-      <PartForm />
-
-      {/* Search & Category Filter Header */}
-      <form method="GET" className="flex gap-3 items-center">
-        <input
-          name="query"
-          defaultValue={query}
-          placeholder="Search by Part # or Description..."
-          className="border p-2 rounded text-sm w-80 bg-transparent"
-        />
-        <select
-          name="category"
-          defaultValue={category}
-          className="border p-2 rounded text-sm bg-transparent"
-        >
-          <option value="">All Categories</option>
-          {categories.map(
-            (c) =>
-              c.category && (
-                <option key={c.category} value={c.category}>
-                  {c.category}
-                </option>
-              )
-          )}
-        </select>
-        <button
-          type="submit"
-          className="bg-gray-800 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 transition"
-        >
-          Filter
-        </button>
-        {(query || category) && (
-          <Link
-            href="/parts"
-            className="text-sm text-red-600 underline ml-2"
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">Parts Catalogue</h1>
+        
+        {/* 3. Gate the creation action behind the RBAC check */}
+        {canManageCatalogue && (
+          <Link 
+            href="/parts/new"
+            className="rounded-md bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
           >
-            Clear
+            + Add New Part
           </Link>
         )}
-      </form>
+      </div>
 
-      {/* Parts List Table */}
-      <div className="border rounded-md overflow-hidden">
-        <table className="w-full text-left border-collapse text-sm">
-          <thead className="bg-gray-100 dark:bg-gray-800 border-b">
+      {/* Pass the categories into the SearchFilters component */}
+      <SearchFilters categories={categories} />
+
+      {/* The Data Table */}
+      <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow dark:border-zinc-800 dark:bg-zinc-900">
+        <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+          <thead className="bg-zinc-50 dark:bg-zinc-950">
             <tr>
-              <th className="p-3">Mouser Part #</th>
-              <th className="p-3">Mfr Part #</th>
-              <th className="p-3">Manufacturer</th>
-              <th className="p-3">Category</th>
-              <th className="p-3">Description</th>
-              <th className="p-3">Price</th>
-              <th className="p-3">Stock</th>
-              <th className="p-3">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Part Number</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Manufacturer</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Category</th>
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Unit Price</th>
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Stock</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {parts.length === 0 ? (
               <tr>
-                <td colSpan={8} className="p-4 text-center text-gray-500">
+                <td colSpan={5} className="px-6 py-12 text-center text-zinc-500 dark:text-zinc-400">
                   No parts found matching your criteria.
                 </td>
               </tr>
             ) : (
               parts.map((part) => (
-                <tr key={part.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td className="p-3 font-mono">{part.mouserPartNumber}</td>
-                  <td className="p-3 font-mono">{part.manufacturerPartNum}</td>
-                  <td className="p-3">{part.manufacturer}</td>
-                  <td className="p-3">
-                    <span className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs">
-                      {part.category || "N/A"}
-                    </span>
+                <tr key={part.id} className="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                  <td className="px-6 py-4 font-medium text-blue-600 dark:text-blue-400">
+                    <Link href={`/parts/${part.id}`}>{part.manufacturerPartNum}</Link>
                   </td>
-                  <td className="p-3 max-w-xs truncate">{part.description}</td>
-                  <td className="p-3">${part.unitPrice.toFixed(4)}</td>
-                  <td className="p-3">{part.stockQuantity}</td>
-                  <td className="p-3">
-                    <form
-                      action={async () => {
-                        "use server";
-                        await deletePart(part.id);
-                      }}
-                    >
-                      <button
-                        type="submit"
-                        className="text-red-600 hover:underline text-xs"
-                      >
-                        Delete
-                      </button>
-                    </form>
+                  <td className="px-6 py-4 text-sm text-zinc-900 dark:text-zinc-300">{part.manufacturer}</td>
+                  <td className="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-500">{part.category}</td>
+                  <td className="px-6 py-4 text-right text-sm text-zinc-900 dark:text-zinc-300">
+                    ₹{part.unitPrice.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 text-right text-sm">
+                    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                      part.stockQuantity > 0 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                    }`}>
+                      {part.stockQuantity}
+                    </span>
                   </td>
                 </tr>
               ))

@@ -4,7 +4,7 @@
 
 ---
 
-## [Entry 01] — Prisma 7 Driver Adapter & Native PG Connection Pool Misfire
+## [Entry 01] Prisma 7 Driver Adapter & Native PG Connection Pool Misfire
 
 ### 1. Issue & Error Signature
 
@@ -48,7 +48,7 @@ Ensured `src/seed.ts` gracefully closes both the Prisma client (`$disconnect()`)
 
 ---
 
-## [Entry 02] — Auth.js v5 & App Router Edge Runtime Compatibility Misfire with bcryptjs
+## [Entry 02] Auth.js v5 & App Router Edge Runtime Compatibility Misfire with bcryptjs
 
 ### 1. Issue & Error Signature
 
@@ -79,7 +79,7 @@ This guarantees that cryptographic hash comparisons during authentication execut
 
 ---
 
-## [Entry 03] — Manufacturer Part Catalog Duplication & Composite Natural Key Migration
+## [Entry 03] Manufacturer Part Catalog Duplication & Composite Natural Key Migration
 
 ### 1. Issue & Error Signature
 
@@ -129,7 +129,7 @@ await prisma.part.upsert({
 
 ---
 
-## [Entry 04] — Host Port Collision & Idempotent Container Persistence Verification
+## [Entry 04] Host Port Collision & Idempotent Container Persistence Verification
 
 ### 1. Issue & Error Signature
 
@@ -170,7 +170,7 @@ This confirmed that Docker volume data persisted reliably across container lifec
 
 ---
 
-## [Entry 05] — Immutable Version Tracking via Compound Unique Indexing (`@@unique([quoteNumber, version])`)
+## [Entry 05] Immutable Version Tracking via Compound Unique Indexing (`@@unique([quoteNumber, version])`)
 
 ### 1. Issue & Error Signature
 
@@ -201,7 +201,7 @@ This ensures that while multiple database records can share the exact same `quot
 
 ---
 
-## [Entry 06] — Prisma `Decimal` to Standard TypeScript `Number` Type Mismatch in Guardrail Spread
+## [Entry 06] Prisma `Decimal` to Standard TypeScript `number` Type Mismatch in Guardrail Spread
 
 ### 1. Issue & Error Signature
 
@@ -236,7 +236,7 @@ if (!canReviseQuote(user, {
 
 ---
 
-## [Entry 07] — Atomic Version Archiving & Race-Condition Prevention via Multi-Operation `$transaction`
+## [Entry 07] Atomic Version Archiving & Race-Condition Prevention via Multi-Operation `$transaction`
 
 ### 1. Issue & Error Signature
 
@@ -246,8 +246,8 @@ When executing quote revisions without wrapping mutations in an atomic database 
 
 Revising a quote requires two tightly coupled database writes:
 
-1. Demoting the existing active version (`DRAFT`, `REJECTED`) to an immutable `ARCHIVED` status.
-2. Inserting the successor version (`version = N + 1`) along with newly calculated or cloned line items.
+1. **Demoting** the existing active version (`DRAFT`, `REJECTED`) to an immutable `ARCHIVED` status.
+2. **Inserting** the successor version (`version = N + 1`) along with newly calculated or cloned line items.
 
 If executed sequentially without ACID transactional guarantees, intermittent server failures or schema validation errors can break state integrity between the old and new version records.
 
@@ -291,7 +291,7 @@ const [archivedQuote, revisedQuote] = await db.$transaction([
 
 ---
 
-## [Entry 08] — Server-Side RBAC Guardrails & Threshold-Based High-Discount Routing
+## [Entry 08] Server-Side RBAC Guardrails & Threshold-Based High-Discount Routing
 
 ### 1. Issue & Error Signature
 
@@ -299,7 +299,7 @@ During security testing of API endpoints and Server Actions, relying solely on c
 
 ### 2. Root Cause & Architectural Context
 
-Client-side restrictions can be bypassed using REST clients or browser console API invocations. Enterprise ERP systems require mandatory access control and approval governance enforced directly at the server mutation layer before initiating database transactions.
+Client-side restrictions can be bypassed using REST clients or browser console API invocations. Enterprise ERP systems require mandatory access control and approval governance enforced directly at the **server mutation layer** before initiating database transactions.
 
 ### 3. Resolution & Implementation
 
@@ -322,4 +322,157 @@ const discountVal = input.discountPercent || 0;
 const initialStatus = requiresManagerApproval(discountVal)
   ? QuoteStatus.PENDING_APPROVAL
   : QuoteStatus.DRAFT;
+```
+
+---
+
+## [Entry 09] Next.js App Router Form Hydration & URL State Synchronization
+
+### 1. Issue & Error Signature
+
+When implementing the multi-parameter search interface (keyword and category) for the Parts Catalogue, the native HTML `<form>` triggered full-page reloads, and the UI `<select>` dropdowns failed to reflect the active filters after navigation.
+
+### 2. Root Cause & Architectural Context
+
+In the Next.js App Router paradigm, relying on standard HTML form submissions or basic `defaultValue` props within Server Components creates state desynchronization. React's `defaultValue` only fires on the initial mount. When URL parameters change, the Server Component re-renders the data, but the unmounted Client DOM retains stale input values, causing the visual state of the form to detach from the actual URL state.
+
+### 3. Resolution & Implementation
+
+Decoupled the search interface into a dedicated Client Component (`SearchFilters.tsx`) to imperatively manage routing and state synchronization using Next.js hooks (`useRouter`, `useSearchParams`, `usePathname`):
+
+```typescript
+// Safely initialize client state directly from the active URL parameters
+const [query, setQuery] = useState(searchParams.get("query") || "");
+const [category, setCategory] = useState(searchParams.get("category") || "");
+
+const handleSearch = (e: React.FormEvent) => {
+  e.preventDefault();
+  const params = new URLSearchParams(searchParams);
+
+  // Construct new URL state
+  if (query) params.set("query", query);
+  else params.delete("query");
+
+  // Update URL without full page reload, triggering Server Component data fetch
+  replace(`${pathname}?${params.toString()}`);
+};
+```
+
+This guarantees that the Client Component always reflects the source-of-truth URL, while delegating the actual data fetching securely to the Server Component.
+
+---
+
+## [Entry 10] Next.js 15 `searchParams` Asynchronous API Breaking Change
+
+### 1. Issue & Error Signature
+
+Despite the URL correctly updating via the `SearchFilters` client component (e.g., `?query=capacitor`), the Server Component silently ignored all parameters, consistently returning an unfiltered Prisma dataset.
+
+### 2. Root Cause & Architectural Context
+
+Next.js 15 introduced a fundamental breaking change where dynamic APIs (like `searchParams` and `params`) transitioned from synchronous objects to asynchronous Promises. Treating `searchParams` as a synchronous object evaluates properties like `.query` as `undefined` at runtime, causing the Prisma `where` clause to fall back to empty strings and bypass all filtering logic.
+
+### 3. Resolution & Implementation
+
+Refactored the Server Component interface to explicitly type `searchParams` as a `Promise` and strictly `await` the resolution before destructuring the query arguments:
+
+```typescript
+export default async function PartsCataloguePage({
+  searchParams,
+}: {
+  // 1. Explicitly type as a Promise to satisfy Next.js 15 runtime
+  searchParams: Promise<{ query?: string; category?: string }>;
+}) {
+  // 2. Await the dynamic API before extraction
+  const params = await searchParams;
+
+  const query = params?.query || "";
+  const category = params?.category || "";
+
+  // 3. Pass resolved strings to the Prisma data layer
+  const parts = await getParts(query, category);
+```
+
+---
+
+## [Entry 11] Stale Server Component Caching on Distinct Database Queries
+
+### 1. Issue & Error Signature
+
+After implementing a dynamic Prisma query to fetch unique product categories (`getUniqueCategories`), the front-end dropdown rendered completely empty despite the database successfully seeding with components categorized as `"Connectors"` and `"ICs"`.
+
+### 2. Root Cause & Architectural Context
+
+Next.js aggressively caches Server Components and data fetches during the build process or initial render to optimize edge delivery. Because `PartsCataloguePage` did not initially contain dynamic runtime functions (before `searchParams` were properly awaited), the framework statically generated the route. The `getUniqueCategories` Prisma query fired once when the database was empty, cached the resulting empty array `[]`, and refused to re-query the PostgreSQL instance on subsequent navigations.
+
+### 3. Resolution & Implementation
+
+Enforced a strict dynamic rendering strategy at the route level. By exporting the `force-dynamic` configuration constant, Next.js is instructed to bypass the Route Cache and execute the Prisma queries directly against the database on every request:
+
+```typescript
+import { getParts, getUniqueCategories } from "@/app/actions/parts";
+import SearchFilters from "./SearchFilters";
+
+// Opt out of static generation; enforce request-time execution
+export const dynamic = "force-dynamic";
+
+export default async function PartsCataloguePage({ ... }) {
+  // Concurrently fetch grid data and distinct dropdown categories
+  const [parts, categories] = await Promise.all([
+    getParts(query, category),
+    getUniqueCategories(),
+  ]);
+
+  // ...
+}
+```
+
+Coupled with Prisma's `distinct: ['category']` API, this ensures the filter dropdown immediately reflects newly seeded product categories without requiring manual cache invalidation or server restarts.
+
+---
+
+## [Entry 12] Pricing Model Logic Correction (Cost-Plus vs. Gross Margin)
+
+### 1. Issue & Error Signature
+
+During verification testing of the quotation totals, the calculated margin values were mathematically incorrect based on B2B distribution standards. For a part costing `$100` sold at `$125`, the initial system reported a `25%` margin instead of the true `20%` gross margin, violating the assignment's business logic requirements.
+
+### 2. Root Cause & Architectural Context
+
+An initial AI-assisted code generation of the pricing module (`src/lib/pricing.ts`) implemented the standard **markup** formula (`(Sell - Cost) / Cost`) instead of the required enterprise **gross margin** formula (`(Sell - Cost) / Sell`). Blindly trusting the generated snippet created a fundamental accounting error that would misrepresent profitability across all quotations.
+
+### 3. Resolution & Implementation
+
+Caught the discrepancy against the technical specifications, rejected the AI-generated snippet, and manually rewrote the financial calculation pipeline. Enforced strict arithmetic formulas tailored to true gross margin and implemented a zero-clamping mechanism to prevent negative margins from propagating into the UI:
+
+```typescript
+// Corrected Gross Margin Formula
+const calculateMargin = (unitCost: number, unitSellPrice: number) => {
+  if (unitSellPrice <= 0) return 0;
+  return Math.max(0, ((unitSellPrice - unitCost) / unitSellPrice) * 100);
+};
+```
+
+---
+
+## [Entry 13] Live API Rate-Limiting & Timeout Handlers (Mouser Electronics)
+
+### 1. Issue & Error Signature
+
+During execution of the live database seeding script to fulfill the multi-category requirement, the process crashed midway with an `AxiosError: Request failed with status code 429` (Too Many Requests) and intermittent `ETIMEDOUT` errors.
+
+### 2. Root Cause & Architectural Context
+
+The initial seeding script dispatched external requests to the Mouser API concurrently using `Promise.all()`. The third-party distributor API enforces strict rate limits and concurrent connection ceilings, which the aggressive parallel ingestion violated, leading to IP-level blocking and socket timeouts.
+
+### 3. Resolution & Implementation
+
+Refactored the network ingestion layer away from concurrent arrays and into a sequential `for...of` loop with a synthetic delay (`setTimeout`) between live requests. Additionally, finalized the offline-first filesystem cache (`.cache/mouser/`) to intercept repeated queries, ensuring that subsequent seed runs bypass the network entirely:
+
+```typescript
+// Sequential delay implementation for rate-limit safety
+for (const partNum of partNumbers) {
+  await fetchFromMouser(partNum);
+  await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5s delay
+}
 ```

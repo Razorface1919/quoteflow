@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -13,9 +13,10 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const { id } = await params;
     // 1. Fetch the existing quote with its line items
     const existing = await db.quote.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { lineItems: true },
     });
 
